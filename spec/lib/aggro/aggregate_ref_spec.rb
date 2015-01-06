@@ -4,7 +4,7 @@ describe AggregateRef do
   subject(:ref) { AggregateRef.new(id) }
 
   let(:id) { SecureRandom.uuid }
-  let(:fake_ring) { double(node_for: '10.0.0.70') }
+  let(:fake_ring) { spy(node_for: '10.0.0.70') }
 
   before do
     allow(Aggro).to receive(:hash_ring).and_return fake_ring
@@ -16,8 +16,9 @@ describe AggregateRef do
     end
 
     it 'should memorize the lookup to reduce hashing' do
-      expect(fake_ring).to receive(:node_for).once
       5.times { ref.server }
+
+      expect(fake_ring).to have_received(:node_for).once
     end
   end
 end
