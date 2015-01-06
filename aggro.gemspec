@@ -25,4 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
 
   spec.add_runtime_dependency 'consistent-hashing'
+  spec.add_runtime_dependency 'msgpack'
+  spec.add_runtime_dependency 'activesupport'
 end
