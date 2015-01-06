@@ -1,0 +1,8 @@
+AllCops:
+  Exclude:
+    - aggro.gemspec
+    - lib/aggro/version.rb
+
+Eval:
+  Exclude:
+    - spec/spec_helper.rb
