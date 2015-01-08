@@ -1,7 +1,8 @@
 describe AggregateRef do
-  subject(:ref) { AggregateRef.new(id) }
+  subject(:ref) { AggregateRef.new(id, type) }
 
   let(:id) { SecureRandom.uuid }
+  let(:type) { 'type' }
   let(:fake_ring) { spy(node_for: '10.0.0.70') }
 
   before do
