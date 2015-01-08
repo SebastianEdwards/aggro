@@ -10,20 +10,28 @@ require 'aggro/abstract_store'
 require 'aggro/aggregate_ref'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
+require 'aggro/node_list'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
   Event = Struct.new(:name, :occured_at, :details)
   EventStream = Struct.new(:id, :type, :events)
 
-  def self.initialize_hash_ring(servers = servers_from_env)
-    ConsistentHashing::Ring.new.tap do |ring|
-      servers.each { |server| ring.add server }
+  # Public: Value object for server node.
+  class Node < Struct.new(:id, :server)
+    def to_s
+      id
     end
   end
 
-  def self.hash_ring
-    @hash_ring ||= initialize_hash_ring
+  def self.initialize_node_list(servers = servers_from_env)
+    NodeList.new.tap do |ring|
+      servers.each { |server| ring.add Node.new(server, server) }
+    end
+  end
+
+  def self.node_list
+    @node_list ||= initialize_node_list
   end
 
   def self.servers_from_env
