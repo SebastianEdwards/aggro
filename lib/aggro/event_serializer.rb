@@ -1,15 +1,17 @@
 module Aggro
   # Public: Converts events to and from serialized data.
   module EventSerializer
-    def self.deserialize(serialized)
+    module_function
+
+    def deserialize(serialized)
       event_from_hash MessagePack.unpack(serialized)
     end
 
-    def self.event_from_hash(hash)
+    def event_from_hash(hash)
       Event.new(hash['n'], Time.at(hash['t']), hash['d'].deep_symbolize_keys!)
     end
 
-    def self.serialize(deserialized)
+    def serialize(deserialized)
       MessagePack.pack(n: deserialized.name, t: deserialized.occured_at.to_i,
                        d: deserialized.details)
     end

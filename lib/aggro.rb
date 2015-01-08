@@ -24,17 +24,19 @@ module Aggro
     end
   end
 
-  def self.initialize_node_list(servers = servers_from_env)
+  module_function
+
+  def initialize_node_list(servers = servers_from_env)
     NodeList.new.tap do |ring|
       servers.each { |server| ring.add Node.new(server, server) }
     end
   end
 
-  def self.node_list
+  def node_list
     @node_list ||= initialize_node_list
   end
 
-  def self.servers_from_env
+  def servers_from_env
     ENV.fetch('AGGRO_SERVERS') { [] }.split(',').map(&:strip)
   end
 end
