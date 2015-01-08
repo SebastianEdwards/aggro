@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Aggro do
   describe '.initialize_hash_ring' do
     context 'when called without args' do

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe EventSerializer do
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
   let(:event) { Event.new 'tested_system', Time.new(2015), data }
