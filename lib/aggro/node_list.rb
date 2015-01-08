@@ -16,7 +16,6 @@ module Aggro
         .cycle
         .take(nodes.index(hash_ring.node_for(id)) + replication_factor)
         .last(replication_factor)
-        .map(&:server)
     end
 
     def nodes

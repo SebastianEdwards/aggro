@@ -9,24 +9,24 @@ module Aggro
       @type = type
     end
 
-    def primary_server
-      servers.first
-    end
+    def nodes
+      current_node_list_state = Aggro.node_list.state
 
-    def secondary_servers
-      servers.slice(1)
-    end
-
-    def servers
-      current_ring_state = Aggro.node_list.state
-
-      if @last_ring_state == current_ring_state
-        @servers ||= Aggro.node_list.nodes_for(id)
+      if @last_node_list_state == current_node_list_state
+        @nodes ||= Aggro.node_list.nodes_for(id)
       else
-        @last_ring_state = current_ring_state
+        @last_node_list_state = current_node_list_state
 
-        @servers = Aggro.node_list.nodes_for(id)
+        @nodes = Aggro.node_list.nodes_for(id)
       end
+    end
+
+    def primary_node
+      nodes.first
+    end
+
+    def secondary_nodes
+      nodes.slice(1)
     end
   end
 end
