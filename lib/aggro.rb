@@ -35,6 +35,6 @@ module Aggro
   end
 
   def self.servers_from_env
-    ENV['AGGRO_SERVERS'] ? ENV['AGGRO_SERVERS'].split(',') : []
+    ENV.fetch('AGGRO_SERVERS') { [] }.split(',').map(&:strip)
   end
 end
