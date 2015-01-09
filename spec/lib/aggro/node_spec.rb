@@ -1,4 +1,4 @@
-describe NodeList do
+describe Node do
   subject(:node) { Node.new('flashing-sparkle', '10.0.0.70') }
   let(:moved_node) { Node.new('flashing-sparkle', '10.0.0.75') }
   let(:other_node) { Node.new('dancing-sparkle', '10.0.0.75') }

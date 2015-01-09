@@ -17,12 +17,12 @@ describe Aggro do
     end
   end
 
-  describe '.hash_ring' do
+  describe '.node_list' do
     it 'should return a node list' do
       expect(Aggro.node_list).to be_a NodeList
     end
 
-    it 'should return the same hash ring every time' do
+    it 'should return the same node list every time' do
       expect(Aggro.node_list).to eq Aggro.node_list
     end
   end
