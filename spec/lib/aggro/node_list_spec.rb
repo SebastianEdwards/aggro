@@ -1,4 +1,4 @@
-describe NodeList do
+RSpec.describe NodeList do
   subject(:node_list) { NodeList.new }
 
   let(:second_node_list) { NodeList.new }

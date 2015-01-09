@@ -1,4 +1,4 @@
-describe AbstractStore do
+RSpec.describe AbstractStore do
   subject(:store) { AbstractStore.new }
 
   describe '#read' do

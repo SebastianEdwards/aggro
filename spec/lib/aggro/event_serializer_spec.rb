@@ -1,4 +1,4 @@
-describe EventSerializer do
+RSpec.describe EventSerializer do
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
   let(:event) { Event.new 'tested_system', Time.new(2015), data }
   describe '.serialize' do

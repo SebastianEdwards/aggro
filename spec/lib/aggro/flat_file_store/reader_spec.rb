@@ -1,4 +1,4 @@
-describe FlatFileStore::Reader do
+RSpec.describe FlatFileStore::Reader do
   subject(:reader) { FlatFileStore::Reader.new data_io, index_io }
 
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }

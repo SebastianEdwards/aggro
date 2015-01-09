@@ -1,4 +1,4 @@
-describe Aggro do
+RSpec.describe Aggro do
   describe '.initialize_node_list' do
     context 'when called without args' do
       it 'should initialize the node list from env variable' do

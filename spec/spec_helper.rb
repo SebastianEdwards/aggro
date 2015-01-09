@@ -1,4 +1,5 @@
 RSpec.configure do |config|
+  config.disable_monkey_patching!
   config.order = :random
 
   config.expect_with :rspec do |expectations|

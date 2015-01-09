@@ -1,4 +1,4 @@
-describe FlatFileStore do
+RSpec.describe FlatFileStore do
   subject(:store) { FlatFileStore.new }
 
   let(:data_io) { StringIO.new }

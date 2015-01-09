@@ -1,4 +1,4 @@
-describe AggregateRef do
+RSpec.describe AggregateRef do
   subject(:ref) { AggregateRef.new(id, type) }
 
   let(:id) { SecureRandom.uuid }
