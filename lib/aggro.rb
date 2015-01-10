@@ -12,6 +12,7 @@ require 'aggro/aggregate_ref'
 require 'aggro/cluster_config'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
+require 'aggro/local_node'
 require 'aggro/node'
 require 'aggro/node_list'
 
@@ -47,6 +48,7 @@ module Aggro
       NodeList.new.tap do |node_list|
         nodes = cluster_config.nodes
         nodes.each { |name, server| node_list.add Node.new(name, server) }
+        node_list.add LocalNode.new(cluster_config.node_name)
       end
     end
   end
