@@ -6,8 +6,8 @@ module Aggro
   class FlatFileStore < AbstractStore
     INDEX_DIRECTORY = 'indexes'.freeze
 
-    class << self
-      attr_accessor :directory
+    def initialize(directory)
+      @directory = directory
     end
 
     def read(refs)
@@ -23,8 +23,10 @@ module Aggro
 
     private
 
+    attr_reader :directory
+
     def data_file(ref, flags = 'rb')
-      dir = [FlatFileStore.directory, ref.type].join('/')
+      dir = [directory, ref.type].join('/')
       FileUtils.mkdir_p dir
 
       File.new [dir, ref.id].join('/'), flags
@@ -37,7 +39,7 @@ module Aggro
     end
 
     def index_file(ref, flags = 'rb')
-      dir = [FlatFileStore.directory, INDEX_DIRECTORY].join('/')
+      dir = [directory, INDEX_DIRECTORY].join('/')
       FileUtils.mkdir_p dir
 
       File.new [dir, ref.id].join('/'), flags

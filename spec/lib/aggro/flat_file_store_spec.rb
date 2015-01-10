@@ -1,5 +1,5 @@
 RSpec.describe FlatFileStore do
-  subject(:store) { FlatFileStore.new }
+  subject(:store) { FlatFileStore.new STORE_DIR }
 
   let(:data_io) { StringIO.new }
   let(:index_io) { StringIO.new }
@@ -16,7 +16,7 @@ RSpec.describe FlatFileStore do
 
   describe '#read' do
     before do
-      FlatFileStore.new.write [event_stream]
+      FlatFileStore.new(STORE_DIR).write [event_stream]
     end
 
     it 'should be able to restore written data' do

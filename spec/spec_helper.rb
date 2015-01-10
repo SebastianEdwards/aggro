@@ -22,4 +22,4 @@ Aggro.constants.each do |const|
 end
 
 ENV['AGGRO_SERVERS'] = '10.0.0.1,10.0.0.2'
-FlatFileStore.directory = './tmp/data'
+STORE_DIR = './tmp/data'
