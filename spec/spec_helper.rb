@@ -10,8 +10,12 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before(:each) do
+    FileUtils.mkdir_p './tmp/test/aggro'
+  end
+
   config.after(:each) do
-    FileUtils.rm_r './tmp/data' if File.directory? './tmp/data'
+    FileUtils.rm_r './tmp/test/aggro' if File.directory? './tmp/test/aggro'
   end
 end
 
@@ -21,5 +25,7 @@ Aggro.constants.each do |const|
   eval "#{const} = Aggro::#{const}"
 end
 
-ENV['AGGRO_SERVERS'] = '10.0.0.1,10.0.0.2'
-STORE_DIR = './tmp/data'
+Aggro.data_dir = './tmp/test'
+
+STORE_DIR = './tmp/test/aggro/data'
+CLUSTER_CONFIG_PATH = './tmp/test/aggro/cluster.yml'

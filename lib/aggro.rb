@@ -4,10 +4,12 @@ require 'active_support/core_ext/hash/keys'
 require 'consistent_hashing'
 require 'fileutils'
 require 'msgpack'
+require 'yaml'
 
 require 'aggro/abstract_store'
 
 require 'aggro/aggregate_ref'
+require 'aggro/cluster_config'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
 require 'aggro/node'
@@ -18,19 +20,34 @@ module Aggro
   Event = Struct.new(:name, :occured_at, :details)
   EventStream = Struct.new(:id, :type, :events)
 
+  class << self
+    attr_writer :data_dir
+  end
+
   module_function
 
-  def initialize_node_list(servers = servers_from_env)
-    NodeList.new.tap do |ring|
-      servers.each { |server| ring.add Node.new(server, server) }
+  def cluster_config
+    @cluster_config ||= ClusterConfig.new cluster_config_path
+  end
+
+  def cluster_config_path
+    [data_dir, 'cluster.yml'].join('/')
+  end
+
+  def data_dir
+    @data_dir ||= begin
+      './tmp/aggro'.tap do |dir|
+        FileUtils.mkdir_p dir
+      end
     end
   end
 
   def node_list
-    @node_list ||= initialize_node_list
-  end
-
-  def servers_from_env
-    ENV.fetch('AGGRO_SERVERS') { [] }.split(',').map(&:strip)
+    @node_list ||= begin
+      NodeList.new.tap do |node_list|
+        nodes = cluster_config.nodes
+        nodes.each { |name, server| node_list.add Node.new(name, server) }
+      end
+    end
   end
 end

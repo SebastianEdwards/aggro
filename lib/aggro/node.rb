@@ -1,5 +1,5 @@
 module Aggro
-  # Public: Value object for server node.
+  # Public: Represents an aggro server node.
   class Node < Struct.new(:id, :server)
     def to_s
       id
