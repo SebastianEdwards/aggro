@@ -29,3 +29,5 @@ Aggro.data_dir = './tmp/test'
 
 STORE_DIR = './tmp/test/aggro/data'
 CLUSTER_CONFIG_PATH = './tmp/test/aggro/cluster.yml'
+
+Thread.abort_on_exception = true

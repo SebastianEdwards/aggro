@@ -12,7 +12,7 @@ RSpec.describe AggregateRef do
 
   describe '#nodes' do
     it 'should return the nodes on which the aggregate should persist' do
-      expect(ref.nodes.first.server).to eq '10.0.0.70'
+      expect(ref.nodes.first.endpoint).to eq '10.0.0.70'
     end
 
     it 'should memorize the lookup to reduce hashing' do

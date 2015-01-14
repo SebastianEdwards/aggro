@@ -26,5 +26,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'consistent-hashing'
   spec.add_runtime_dependency 'msgpack'
+  spec.add_runtime_dependency 'nn-core'
   spec.add_runtime_dependency 'activesupport'
 end
