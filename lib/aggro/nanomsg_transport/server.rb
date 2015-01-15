@@ -23,7 +23,7 @@ module Aggro
         @reply_socket = Reply.new(@endpoint)
 
         Thread.new do
-          loop do
+          while @running
             @reply_socket.send_msg @block.call(@reply_socket.recv_msg)
           end
         end
