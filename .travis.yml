@@ -1,10 +1,9 @@
 language: ruby
 rvm:
   - 2.2.0
-  - jruby-19mode
   - ruby-head
   - jruby-head
-script: bundle exec rspec spec
+script: bundle exec rspec
 before_install:
   - git clone git://github.com/nanomsg/nanomsg.git
-  - cd nanomsg && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ${TRAVIS_BUILD_DIR}
+  - cd nanomsg && ./autogen.sh && ./configure --enable-debug && sudo make install && sudo ldconfig && cd ${TRAVIS_BUILD_DIR}
