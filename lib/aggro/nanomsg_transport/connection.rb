@@ -35,9 +35,9 @@ module Aggro
         nbytes = NNCore::LibNanomsg.nn_recv(@socket, @rcv_buffer,
                                             NNCore::NN_MSG, 0)
 
-        str = @rcv_buffer.read_pointer
         assert(nbytes)
 
+        str = @rcv_buffer.read_pointer
         response = str.read_string(nbytes)
         NNCore::LibNanomsg.nn_freemsg str
 
