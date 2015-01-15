@@ -10,7 +10,7 @@ RSpec.describe MessageRouter do
 
   describe '#attach_handler' do
     it 'should attach a given callable to handle a specific message type' do
-      callable = -> (parsed) { parsed }
+      callable = ->(parsed) { parsed }
 
       router.attach_handler message_class, callable
 

@@ -40,7 +40,7 @@ module Aggro
     private
 
     def create_loopback_client
-      -> (msg) { message_router.route msg }.tap do |proc|
+      ->(msg) { message_router.route msg }.tap do |proc|
         proc.class_eval { alias_method :post, :call }
       end
     end
