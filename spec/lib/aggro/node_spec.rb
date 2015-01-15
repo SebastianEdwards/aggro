@@ -1,9 +1,9 @@
 RSpec.describe Node do
   subject(:node) { Node.new('flashing-sparkle') }
 
-  describe '#connection' do
+  describe '#client' do
     it 'should return a client for the node using the current transport' do
-      expect(node.connection).to be_a Client
+      expect(node.client).to be_a Client
     end
   end
 

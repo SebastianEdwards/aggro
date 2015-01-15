@@ -1,5 +1,6 @@
 require 'aggro/version'
 
+require 'active_model'
 require 'active_support/core_ext/hash/keys'
 require 'consistent_hashing'
 require 'fileutils'
@@ -15,6 +16,7 @@ require 'aggro/message/ok'
 require 'aggro/aggregate_ref'
 require 'aggro/client'
 require 'aggro/cluster_config'
+require 'aggro/command'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
 require 'aggro/local_node'
@@ -75,6 +77,12 @@ module Aggro
 
   def port
     @port ||= ENV.fetch('PORT') { 5000 }.to_i
+  end
+
+  def reset
+    @cluster_config = nil
+    @local_node = nil
+    @node_list = nil
   end
 
   def transport

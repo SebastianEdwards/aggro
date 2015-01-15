@@ -12,6 +12,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     FileUtils.mkdir_p './tmp/test/aggro'
+    Aggro.reset
   end
 
   config.after(:each) do

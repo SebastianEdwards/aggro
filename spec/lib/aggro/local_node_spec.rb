@@ -17,6 +17,16 @@ RSpec.describe LocalNode do
     end
   end
 
+  describe '#client' do
+    it 'should return a Client-like object which locally routes messages' do
+      fake_router = spy(route: 'OK')
+      allow(node).to receive(:message_router).and_return(fake_router)
+
+      node.client.post 'MSG'
+      expect(fake_router).to have_received(:route).with('MSG')
+    end
+  end
+
   describe '#endpoint' do
     before do
       allow(Aggro).to receive(:port).and_return 6000

@@ -13,6 +13,10 @@ module Aggro
       self
     end
 
+    def client
+      @client ||= create_loopback_client
+    end
+
     def endpoint
       "tcp://127.0.0.1:#{Aggro.port}"
     end
@@ -34,6 +38,12 @@ module Aggro
     end
 
     private
+
+    def create_loopback_client
+      -> (msg) { message_router.route msg }.tap do |proc|
+        proc.class_eval { alias_method :post, :call }
+      end
+    end
 
     def message_router
       @message_router ||= begin

@@ -26,7 +26,17 @@ module Aggro
     end
 
     def secondary_nodes
-      nodes.slice(1)
+      nodes[1..-1]
+    end
+
+    def send_command(command)
+      primary_node.client.post build_command(command)
+    end
+
+    private
+
+    def build_command(command)
+      Message::Command.new(Aggro.local_node, id, command.to_details)
     end
   end
 end
