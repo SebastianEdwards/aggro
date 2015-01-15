@@ -21,7 +21,6 @@ module Aggro
 
         @running = true
         @terminated = false
-        @reply_socket = Reply.new(@endpoint)
         start_on_thread
 
         self
@@ -31,8 +30,6 @@ module Aggro
         return self unless @running
 
         @running = false
-        @reply_socket.terminate
-
         sleep 0.01 until @terminated
 
         self
@@ -46,11 +43,14 @@ module Aggro
 
       def start_on_thread
         Thread.new do
+          @reply_socket = Reply.new(@endpoint)
+
           while @running
             message = @reply_socket.recv_msg
             @reply_socket.send_msg @block.call(message) if message
           end
 
+          @reply_socket.terminate
           @terminated = true
         end
       end
