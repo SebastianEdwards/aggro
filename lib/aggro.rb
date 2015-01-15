@@ -10,12 +10,15 @@ require 'aggro/abstract_store'
 
 require 'aggro/message/command'
 require 'aggro/message/heartbeat'
+require 'aggro/message/ok'
 
 require 'aggro/aggregate_ref'
+require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
 require 'aggro/local_node'
+require 'aggro/message_parser'
 require 'aggro/message_router'
 require 'aggro/nanomsg_transport'
 require 'aggro/node'
@@ -26,10 +29,12 @@ module Aggro
   Event = Struct.new(:name, :occured_at, :details)
   EventStream = Struct.new(:id, :type, :events)
 
-  MESSAGE_TYPES = {
-    '1' => Message::Heartbeat,
-    '2' => Message::Command
-  }.freeze
+  MESSAGE_TYPES = Message
+                  .constants
+                  .map { |sym| Message.const_get sym }
+                  .select { |m| m.const_defined? 'TYPE_CODE' }
+                  .each_with_object({}) { |m, h| h.merge! m::TYPE_CODE => m }
+                  .freeze
 
   class << self
     attr_writer :data_dir
@@ -54,12 +59,16 @@ module Aggro
     end
   end
 
+  def local_node
+    @local_node ||= LocalNode.new(cluster_config.node_name)
+  end
+
   def node_list
     @node_list ||= begin
       NodeList.new.tap do |node_list|
         nodes = cluster_config.nodes
         nodes.each { |name, server| node_list.add Node.new(name, server) }
-        node_list.add LocalNode.new(cluster_config.node_name)
+        node_list.add local_node
       end
     end
   end

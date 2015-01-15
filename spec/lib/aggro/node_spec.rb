@@ -1,35 +1,15 @@
 RSpec.describe Node do
-  subject(:node) { LocalNode.new('flashing-sparkle') }
+  subject(:node) { Node.new('flashing-sparkle') }
 
-  describe '#bind' do
-    let(:server) { spy }
-    let(:transport) { spy(server: server) }
-
-    before do
-      allow(Aggro).to receive(:transport).and_return transport
-    end
-
-    it 'should start a server for the node using the current transport' do
-      node.bind
-
-      expect(transport).to have_received(:server).with(node.endpoint)
-      expect(server).to have_received(:start)
-    end
-  end
-
-  describe '#endpoint' do
-    before do
-      allow(Aggro).to receive(:port).and_return 6000
-    end
-
-    it 'should have a local TCP endpoint with the correct port' do
-      expect(node.endpoint).to eq 'tcp://127.0.0.1:6000'
+  describe '#connection' do
+    it 'should return a client for the node using the current transport' do
+      expect(node.connection).to be_a Client
     end
   end
 
   describe '#to_s' do
-    let(:moved_node) { LocalNode.new('flashing-sparkle') }
-    let(:other_node) { LocalNode.new('dancing-sparkle') }
+    let(:moved_node) { Node.new('flashing-sparkle') }
+    let(:other_node) { Node.new('dancing-sparkle') }
 
     let(:ring) { ConsistentHashing::Ring.new }
     let(:hasher) { ring.method(:hash_key) }

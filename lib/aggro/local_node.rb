@@ -5,7 +5,7 @@ module Aggro
       return self if @server
 
       @server = Aggro.transport.server(endpoint) do |request|
-        message_router.route request
+        message_router.route MessageParser.parse(request)
       end
 
       @server.start
@@ -20,13 +20,13 @@ module Aggro
     def handle_command(message)
       puts "Got command for #{message.commandee_id} from #{message.sender}"
 
-      'OK'
+      Message::OK.new
     end
 
     def handle_heartbeat(message)
       puts "Got heartbeat from #{message.sender}"
 
-      'OK'
+      Message::OK.new
     end
 
     def to_s
@@ -38,8 +38,8 @@ module Aggro
     def message_router
       @message_router ||= begin
         MessageRouter.new.tap do |router|
-          router.attach_handler Message::Heartbeat, method(:handle_heartbeat)
           router.attach_handler Message::Command, method(:handle_command)
+          router.attach_handler Message::Heartbeat, method(:handle_heartbeat)
         end
       end
     end

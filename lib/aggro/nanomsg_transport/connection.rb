@@ -20,9 +20,8 @@ module Aggro
         set_socket_option NNCore::NN_RCVBUF, 131_072
       end
 
-      def send_msg(msg)
-        msg ||= ''
-
+      def send_msg(stringable)
+        msg = stringable.to_s
         nbytes = NNCore::LibNanomsg.nn_send(@socket, msg, msg.bytesize, 0)
         assert(nbytes)
 
