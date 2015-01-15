@@ -19,6 +19,7 @@ module Aggro
       def close_socket
         request_socket.terminate if @open
         @request_socket = nil
+        @open = false
       end
 
       private
