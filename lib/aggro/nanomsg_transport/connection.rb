@@ -6,8 +6,6 @@ module Aggro
   module NanomsgTransport
     # Private: Base class for nanomsg socket wrappers.
     class Connection
-      TIMEOUT_ERRNO = 35
-
       def initialize(endpoint)
         @endpoint = endpoint
         @rcv_buffer = FFI::MemoryPointer.new(:pointer)
@@ -43,7 +41,7 @@ module Aggro
 
         response
       rescue SocketError => e
-        raise e unless e.errno == TIMEOUT_ERRNO
+        raise e unless e.errno == NNCore::EAGAIN
 
         nil
       end
