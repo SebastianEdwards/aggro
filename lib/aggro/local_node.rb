@@ -22,7 +22,15 @@ module Aggro
     end
 
     def handle_command(message)
-      puts "Got command for #{message.commandee_id} from #{message.sender}"
+      command = message.to_command
+
+      puts "Got #{message.name} for #{message.commandee_id}"
+
+      if command.valid?
+        puts 'Command is valid'
+      else
+        puts 'Command is invalid'
+      end
 
       Message::OK.new
     end

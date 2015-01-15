@@ -9,7 +9,23 @@ module Aggro
       end
 
       def self.parse_details(details)
-        MessagePack.unpack details
+        MessagePack.unpack(details).deep_symbolize_keys!
+      end
+
+      def args
+        details[:args]
+      end
+
+      def command_class
+        ActiveSupport::Inflector.safe_constantize name
+      end
+
+      def name
+        details[:name]
+      end
+
+      def to_command
+        command_class.new args if command_class
       end
 
       def to_s
