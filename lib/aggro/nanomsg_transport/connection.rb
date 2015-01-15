@@ -42,6 +42,7 @@ module Aggro
       end
 
       def terminate
+        assert NNCore::LibNanomsg.nn_shutdown(@socket, @eid) if @eid
         assert NNCore::LibNanomsg.nn_close(@socket)
       end
 

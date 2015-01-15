@@ -10,7 +10,8 @@ module Aggro
       end
 
       def set_endpoint
-        assert NNCore::LibNanomsg.nn_bind(@socket, @endpoint)
+        @eid = NNCore::LibNanomsg.nn_bind(@socket, @endpoint)
+        assert @eid
       end
     end
   end
