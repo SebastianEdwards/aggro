@@ -10,3 +10,7 @@ Documentation:
 Eval:
   Exclude:
     - spec/spec_helper.rb
+
+RaiseArgs:
+  Exclude:
+    - lib/aggro/nanomsg_transport/connection.rb

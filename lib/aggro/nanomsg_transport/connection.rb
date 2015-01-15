@@ -1,10 +1,13 @@
 require 'ffi'
 require 'nn-core'
+require 'aggro/nanomsg_transport/socket_error'
 
 module Aggro
   module NanomsgTransport
     # Private: Base class for nanomsg socket wrappers.
     class Connection
+      TIMEOUT_ERRNO = 35
+
       def initialize(endpoint)
         @endpoint = endpoint
         @rcv_buffer = FFI::MemoryPointer.new(:pointer)
@@ -39,17 +42,20 @@ module Aggro
         NNCore::LibNanomsg.nn_freemsg str
 
         response
+      rescue SocketError => e
+        raise e unless e.errno == TIMEOUT_ERRNO
+
+        nil
       end
 
       def terminate
-        assert NNCore::LibNanomsg.nn_shutdown(@socket, @eid) if @eid
         assert NNCore::LibNanomsg.nn_close(@socket)
       end
 
       protected
 
       def assert(rc)
-        fail "Last API call failed at #{caller(1)}" unless rc >= 0
+        fail SocketError.new NNCore::LibNanomsg.nn_errno unless rc >= 0
       end
 
       def set_socket_option(setting, value)

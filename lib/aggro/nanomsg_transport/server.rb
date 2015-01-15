@@ -20,13 +20,9 @@ module Aggro
         fail ServerAlreadyRunning if @running
 
         @running = true
+        @terminated = false
         @reply_socket = Reply.new(@endpoint)
-
-        Thread.new do
-          while @running
-            @reply_socket.send_msg @block.call(@reply_socket.recv_msg)
-          end
-        end
+        start_on_thread
 
         self
       end
@@ -37,6 +33,8 @@ module Aggro
         @running = false
         @reply_socket.terminate
 
+        sleep 0.01 until @terminated
+
         self
       end
 
@@ -44,6 +42,17 @@ module Aggro
 
       def finalize
         stop
+      end
+
+      def start_on_thread
+        Thread.new do
+          while @running
+            message = @reply_socket.recv_msg
+            @reply_socket.send_msg @block.call(message) if message
+          end
+
+          @terminated = true
+        end
       end
     end
   end
