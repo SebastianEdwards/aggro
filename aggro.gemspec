@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Aggro::VERSION
   spec.authors       = ['Sebastian Edwards']
   spec.email         = ['me@sebastianedwards.co.nz']
-  spec.summary       = 'Distributed in-memory aggregates.'
+  spec.summary       = 'Distributed in-memory event-store.'
   spec.description   = ''
   spec.homepage      = ''
   spec.license       = 'MIT'

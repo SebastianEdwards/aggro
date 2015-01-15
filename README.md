@@ -1,6 +1,10 @@
 # Aggro
 
-TODO: Write a gem description
+[![Build Status](https://travis-ci.org/SebastianEdwards/aggro.svg?branch=master)](https://travis-ci.org/SebastianEdwards/aggro)
+[![Code Climate](https://codeclimate.com/github/SebastianEdwards/aggro/badges/gpa.svg)](https://codeclimate.com/github/SebastianEdwards/aggro)
+[![Coverage Status](https://coveralls.io/repos/SebastianEdwards/aggro/badge.svg)](https://coveralls.io/r/SebastianEdwards/aggro)
+
+Distributed in-memory event-store.
 
 ## Installation
 
