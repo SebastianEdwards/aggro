@@ -12,6 +12,8 @@ module Aggro
           @data_io.write EventSerializer.serialize(event)
           write_to_index @data_io.pos
         end
+
+        @data_io.flush
       end
 
       private
