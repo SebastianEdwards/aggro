@@ -1,29 +1,26 @@
 RSpec.describe LocalNode do
   subject(:node) { LocalNode.new('flashing-sparkle') }
 
-  describe '#bind' do
-    let(:server) { spy }
-    let(:transport) { spy(server: server) }
+  let(:fake_server) { spy(handle_message: 'OK') }
 
-    before do
-      allow(Aggro).to receive(:transport).and_return transport
-    end
+  describe '#bind_server' do
+    it 'should send a bind message to the server' do
+      allow(node).to receive(:server).and_return(fake_server)
 
-    it 'should start a server for the node using the current transport' do
-      node.bind
+      node.bind_server
 
-      expect(transport).to have_received(:server).with(node.endpoint)
-      expect(server).to have_received(:start)
+      expect(fake_server).to have_received :bind
     end
   end
 
   describe '#client' do
-    it 'should return a Client-like object which locally routes messages' do
-      fake_router = spy(route: 'OK')
-      allow(node).to receive(:message_router).and_return(fake_router)
+    before do
+      allow(node).to receive(:server).and_return(fake_server)
+    end
 
+    it 'should return a Client-like object which locally routes messages' do
       node.client.post 'MSG'
-      expect(fake_router).to have_received(:route).with('MSG')
+      expect(fake_server).to have_received(:handle_message).with('MSG')
     end
   end
 
@@ -34,6 +31,16 @@ RSpec.describe LocalNode do
 
     it 'should have a local TCP endpoint with the correct port' do
       expect(node.endpoint).to eq 'tcp://127.0.0.1:6000'
+    end
+  end
+
+  describe '#stop_server' do
+    it 'should send a stop message to the server' do
+      allow(node).to receive(:server).and_return(fake_server)
+
+      node.stop_server
+
+      expect(fake_server).to have_received :stop
     end
   end
 

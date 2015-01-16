@@ -10,8 +10,8 @@ module Aggro
       Client.new endpoint
     end
 
-    def server(endpoint, &block)
-      Server.new endpoint, &block
+    def server(endpoint, callable = nil, &block)
+      Server.new endpoint, callable, &block
     end
   end
 end

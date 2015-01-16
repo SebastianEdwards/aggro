@@ -26,6 +26,7 @@ require 'aggro/message_router'
 require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
+require 'aggro/server'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro

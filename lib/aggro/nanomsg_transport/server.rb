@@ -6,14 +6,17 @@ module Aggro
     class Server
       class ServerAlreadyRunning < RuntimeError; end
 
-      def initialize(endpoint, &block)
-        fail ArgumentError unless block_given?
+      def initialize(endpoint, callable = nil, &block)
+        if callable
+          @callable = callable
+        elsif block_given?
+          @callable = block
+        else
+          fail ArgumentError
+        end
 
         ObjectSpace.define_finalizer self, method(:finalize)
-
-        @running = false
         @endpoint = endpoint
-        @block = block
       end
 
       def start
@@ -47,7 +50,7 @@ module Aggro
 
           while @running
             message = @reply_socket.recv_msg
-            @reply_socket.send_msg @block.call(message) if message
+            @reply_socket.send_msg @callable.call(message) if message
           end
 
           @reply_socket.terminate
