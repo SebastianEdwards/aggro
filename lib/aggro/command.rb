@@ -1,9 +1,8 @@
 module Aggro
-  # Public: Mixin to turn a PORO into an Aggro class.
+  # Public: Mixin to turn a PORO into an Aggro command.
   module Command
-    def self.included(klass)
-      klass.send :include, ActiveModel::Model
-    end
+    extend ActiveSupport::Concern
+    include ActiveModel::Model
 
     def attributes
       {}

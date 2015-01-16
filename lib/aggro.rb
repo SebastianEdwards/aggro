@@ -13,6 +13,7 @@ require 'aggro/message/command'
 require 'aggro/message/heartbeat'
 require 'aggro/message/ok'
 
+require 'aggro/aggregate'
 require 'aggro/aggregate_ref'
 require 'aggro/client'
 require 'aggro/cluster_config'
