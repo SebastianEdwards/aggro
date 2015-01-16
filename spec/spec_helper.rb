@@ -17,6 +17,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     FileUtils.mkdir_p './tmp/test/aggro'
+    Aggro.data_dir = './tmp/test'
     Aggro.reset
   end
 
@@ -30,8 +31,6 @@ require 'aggro'
 Aggro.constants.each do |const|
   eval "#{const} = Aggro::#{const}"
 end
-
-Aggro.data_dir = './tmp/test'
 
 STORE_DIR = './tmp/test/aggro/data'
 CLUSTER_CONFIG_PATH = './tmp/test/aggro/cluster.yml'

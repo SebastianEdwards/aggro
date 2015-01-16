@@ -92,6 +92,7 @@ module Aggro
     @cluster_config = nil
     @local_node = nil
     @node_list = nil
+    @port = nil
   end
 
   def transport

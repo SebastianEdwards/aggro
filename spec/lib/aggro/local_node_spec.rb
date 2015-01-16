@@ -5,7 +5,7 @@ RSpec.describe LocalNode do
 
   describe '#bind_server' do
     it 'should send a bind message to the server' do
-      allow(node).to receive(:server).and_return(fake_server)
+      stub_const 'Aggro::Server', double(new: fake_server)
 
       node.bind_server
 
@@ -36,7 +36,7 @@ RSpec.describe LocalNode do
 
   describe '#stop_server' do
     it 'should send a stop message to the server' do
-      allow(node).to receive(:server).and_return(fake_server)
+      stub_const 'Aggro::Server', double(new: fake_server)
 
       node.stop_server
 

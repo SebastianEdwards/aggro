@@ -1,4 +1,12 @@
 RSpec.describe Aggro do
+  describe '.data_dir' do
+    it 'should default to a tmp folder' do
+      Aggro.data_dir = nil
+
+      expect(Aggro.data_dir).to eq './tmp/aggro'
+    end
+  end
+
   describe '.node_list' do
     let(:nodes) { { 'fluffy' => '10.0.0.50' } }
     let(:is_server_node) { true }
@@ -38,6 +46,20 @@ RSpec.describe Aggro do
       it 'should not initialize the node list with the local node' do
         expect(Aggro.node_list.nodes.map(&:id)).to_not include 'kittens'
       end
+    end
+  end
+
+  describe '.port' do
+    it 'should return $PORT as an integer' do
+      stub_const 'ENV', 'PORT' => '7000'
+
+      expect(Aggro.port).to eq 7000
+    end
+
+    it 'should default to port 5000' do
+      stub_const 'ENV', {}
+
+      expect(Aggro.port).to eq 5000
     end
   end
 
