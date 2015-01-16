@@ -1,8 +1,10 @@
 module Aggro
   # Public: Binds a transport endpoint and handles incoming messages.
   class Server
+    RAW_HANDLER = :handle_raw
+
     def initialize(endpoint)
-      @transport_server = Aggro.transport.server endpoint, method(:handle_raw)
+      @transport_server = Aggro.transport.server endpoint, method(RAW_HANDLER)
     end
 
     def bind

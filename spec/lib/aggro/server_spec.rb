@@ -10,10 +10,18 @@ RSpec.describe Server do
   end
 
   describe '.new' do
-    it 'should get a server with given endpoint from current transport' do
+    let(:handler) { server.method(Server::RAW_HANDLER) }
+
+    it 'should get a server which calls handler from current transport' do
       server
 
-      expect(transport).to have_received(:server).with(endpoint, anything)
+      expect(transport).to have_received(:server).with(endpoint, handler)
+    end
+
+    it 'should designate a handler which responds to raw messages' do
+      raw_message = Message::Heartbeat.new(SecureRandom.uuid).to_s
+
+      expect(handler.call(raw_message)).to be_a Message::OK
     end
   end
 
@@ -26,8 +34,9 @@ RSpec.describe Server do
   end
 
   describe '#handle_message' do
+    let(:sender) { SecureRandom.uuid }
+
     context 'message is a Command' do
-      let(:sender) { SecureRandom.uuid }
       let(:commandee_id) { SecureRandom.uuid }
       let(:details) { { name: 'TestCommand', args: { thing: 'puppy' } } }
       let(:message) { Message::Command.new(sender, commandee_id, details) }
@@ -42,6 +51,14 @@ RSpec.describe Server do
 
         expect(handler_class).to have_received(:new).with(message, server)
         expect(handler).to have_received(:call)
+      end
+    end
+
+    context 'message is a Heartbeat' do
+      let(:message) { Message::Heartbeat.new(sender) }
+
+      it 'should return an OK message' do
+        expect(server.handle_message(message)).to be_a Message::OK
       end
     end
   end
