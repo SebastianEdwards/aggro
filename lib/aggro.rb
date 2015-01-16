@@ -72,7 +72,7 @@ module Aggro
       NodeList.new.tap do |node_list|
         nodes = cluster_config.nodes
         nodes.each { |name, server| node_list.add Node.new(name, server) }
-        node_list.add local_node
+        node_list.add local_node if cluster_config.server_node?
       end
     end
   end

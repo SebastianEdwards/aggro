@@ -23,10 +23,15 @@ module Aggro
       @nodes ||= {}.freeze
     end
 
+    def server_node?
+      @is_server_node == true
+    end
+
     private
 
     def initialize_config
       @node_name = SecureRandom.uuid
+      @is_server_node = false
     end
 
     def load_config
@@ -44,7 +49,8 @@ module Aggro
     def to_h
       {
         node_name: node_name,
-        nodes: nodes
+        nodes: nodes,
+        is_server_node: server_node?
       }
     end
   end
