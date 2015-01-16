@@ -16,6 +16,9 @@ require 'aggro/message/unknown_command'
 
 require 'aggro/handler/command'
 
+require 'aggro/transform/integer'
+require 'aggro/transform/string'
+
 require 'aggro/aggregate'
 require 'aggro/aggregate_ref'
 require 'aggro/client'

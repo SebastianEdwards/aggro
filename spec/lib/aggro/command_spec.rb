@@ -2,20 +2,20 @@ RSpec.describe Command do
   class TestCommand
     include Command
 
-    attr_accessor :thing
-
+    string :thing
     validates :thing, presence: true
 
-    def attributes
-      { thing: @thing }
-    end
+    integer :times
   end
 
-  subject(:command) { TestCommand.new thing: 'puppy' }
+  subject(:command) { TestCommand.new thing: 'puppy', times: '100' }
 
   describe '#to_details' do
     it 'should return a hash containing the command name and arguments' do
-      expected_hash = { name: 'TestCommand', args: { thing: 'puppy' } }
+      expected_hash = {
+        name: 'TestCommand',
+        args: { thing: 'puppy', times: 100 }
+      }
 
       expect(command.to_details).to eq expected_hash
     end
