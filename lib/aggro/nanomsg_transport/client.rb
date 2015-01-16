@@ -5,7 +5,7 @@ module Aggro
     # Public: Client for making requests against a nanomsg server.
     class Client
       def initialize(endpoint)
-        ObjectSpace.define_finalizer self, method(:finalize)
+        ObjectSpace.define_finalizer self, method(:close_socket)
 
         @endpoint = endpoint
       end
@@ -23,10 +23,6 @@ module Aggro
       end
 
       private
-
-      def finalize
-        close_socket
-      end
 
       def request_socket
         @request_socket ||= begin

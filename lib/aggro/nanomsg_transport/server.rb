@@ -15,7 +15,7 @@ module Aggro
           fail ArgumentError
         end
 
-        ObjectSpace.define_finalizer self, method(:finalize)
+        ObjectSpace.define_finalizer self, method(:stop)
         @endpoint = endpoint
       end
 
@@ -39,10 +39,6 @@ module Aggro
       end
 
       private
-
-      def finalize
-        stop
-      end
 
       def start_on_thread
         Thread.new do
