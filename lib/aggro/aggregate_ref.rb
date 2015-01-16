@@ -9,34 +9,18 @@ module Aggro
       @type = type
     end
 
-    def nodes
-      current_node_list_state = Aggro.node_list.state
-
-      if @last_node_list_state == current_node_list_state
-        @nodes ||= Aggro.node_list.nodes_for(id)
-      else
-        @last_node_list_state = current_node_list_state
-
-        @nodes = Aggro.node_list.nodes_for(id)
-      end
-    end
-
-    def primary_node
-      nodes.first
-    end
-
-    def secondary_nodes
-      nodes[1..-1]
-    end
-
     def send_command(command)
-      primary_node.client.post build_command(command)
+      locator.primary_node.client.post build_command(command)
     end
 
     private
 
     def build_command(command)
       Message::Command.new(Aggro.local_node, id, command.to_details)
+    end
+
+    def locator
+      @locator ||= Locator.new(id)
     end
   end
 end
