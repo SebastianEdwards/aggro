@@ -23,9 +23,7 @@ module Aggro
       Handler::Command.new(message, self).call
     end
 
-    def handle_heartbeat(message)
-      puts "Got heartbeat from #{message.sender}"
-
+    def handle_heartbeat(_message)
       Message::OK.new
     end
 
