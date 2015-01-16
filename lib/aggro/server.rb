@@ -20,17 +20,7 @@ module Aggro
     private
 
     def handle_command(message)
-      command = message.to_command
-
-      puts "Got #{message.name} for #{message.commandee_id}"
-
-      if command.valid?
-        puts 'Command is valid'
-      else
-        puts 'Command is invalid'
-      end
-
-      Message::OK.new
+      Handler::Command.new(message, self).call
     end
 
     def handle_heartbeat(message)

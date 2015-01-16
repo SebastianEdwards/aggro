@@ -12,6 +12,9 @@ require 'aggro/abstract_store'
 require 'aggro/message/command'
 require 'aggro/message/heartbeat'
 require 'aggro/message/ok'
+require 'aggro/message/unknown_command'
+
+require 'aggro/handler/command'
 
 require 'aggro/aggregate'
 require 'aggro/aggregate_ref'

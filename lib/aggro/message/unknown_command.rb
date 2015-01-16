@@ -1,8 +1,8 @@
 module Aggro
   module Message
-    # Public: OK message.
-    class OK
-      TYPE_CODE = '01'.freeze
+    # Public: Unknown command message.
+    class UnknownCommand
+      TYPE_CODE = '04'.freeze
 
       def self.parse(_string)
         new

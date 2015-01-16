@@ -25,6 +25,27 @@ RSpec.describe Server do
     end
   end
 
+  describe '#handle_message' do
+    context 'message is a Command' do
+      let(:sender) { SecureRandom.uuid }
+      let(:commandee_id) { SecureRandom.uuid }
+      let(:details) { { name: 'TestCommand', args: { thing: 'puppy' } } }
+      let(:message) { Message::Command.new(sender, commandee_id, details) }
+
+      it 'should delegate to command handler' do
+        handler = spy(call: true)
+        handler_class = spy(new: handler)
+
+        stub_const 'Aggro::Handler::Command', handler_class
+
+        server.handle_message message
+
+        expect(handler_class).to have_received(:new).with(message, server)
+        expect(handler).to have_received(:call)
+      end
+    end
+  end
+
   describe '#stop' do
     it 'should stop the transport server' do
       server.stop
