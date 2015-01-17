@@ -5,6 +5,10 @@ module Aggro
       @id = id
     end
 
+    def local?
+      primary_node.is_a? LocalNode
+    end
+
     def nodes
       current_node_list_state = Aggro.node_list.state
 

@@ -3,6 +3,8 @@ module Aggro
     # Private: Handler for incoming command requests.
     class Command < Struct.new(:message, :server)
       def call
+        return handle_foreign unless commandee_local?
+
         command_known? ? handle_known : handle_unknown
       end
 
@@ -14,6 +16,18 @@ module Aggro
 
       def command_known?
         !command.nil?
+      end
+
+      def commandee_local?
+        comandee_locator.local?
+      end
+
+      def comandee_locator
+        @comandee_locator ||= Locator.new(message.commandee_id)
+      end
+
+      def handle_foreign
+        Message::Ask.new comandee_locator.primary_node.id
       end
 
       def handle_known

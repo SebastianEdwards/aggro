@@ -9,6 +9,7 @@ require 'yaml'
 
 require 'aggro/abstract_store'
 
+require 'aggro/message/ask'
 require 'aggro/message/command'
 require 'aggro/message/heartbeat'
 require 'aggro/message/ok'

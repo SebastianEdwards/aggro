@@ -11,6 +11,22 @@ RSpec.describe Locator do
     allow(Aggro).to receive(:node_list).and_return node_list
   end
 
+  describe '#local?' do
+    context 'primary node is a LocalNode' do
+      let(:node) { LocalNode.new('flashing-sparkle') }
+
+      it 'should return true' do
+        expect(locator.local?).to be_truthy
+      end
+    end
+
+    context 'primary node is not a LocalNode' do
+      it 'should return true' do
+        expect(locator.local?).to be_falsey
+      end
+    end
+  end
+
   describe '#nodes' do
     it 'should return the nodes on which the aggregate should persist' do
       expect(locator.nodes.first.endpoint).to eq '10.0.0.70'
