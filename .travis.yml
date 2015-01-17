@@ -6,6 +6,7 @@ rvm:
   - jruby-head
 matrix:
   allow_failures:
+    - rvm: jruby-19mode
     - rvm: jruby-head
     - rvm: ruby-head
 script: bundle exec rspec
