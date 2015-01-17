@@ -26,6 +26,14 @@ module Aggro
         @attributes ||= {}
       end
 
+      def id(name)
+        create_attrs name, Transform::ID.new
+      end
+
+      def generate_id(name)
+        create_attrs name, Transform::ID.new(generate: true)
+      end
+
       def integer(name)
         create_attrs name, Transform::Integer
       end
