@@ -2,7 +2,8 @@ RSpec.describe Handler::Command do
   subject(:handler) { Handler::Command.new message, server }
 
   let(:command) { double }
-  let(:message) { double to_command: command, commandee_id: SecureRandom.uuid }
+  let(:commandee_id) { SecureRandom.uuid }
+  let(:message) { double to_command: command, commandee_id: commandee_id }
   let(:server) { double }
 
   let(:node) { double }
@@ -27,8 +28,29 @@ RSpec.describe Handler::Command do
     end
 
     context 'local system knows the command' do
-      it 'should return OK' do
-        expect(handler.call).to be_a Message::OK
+      context 'commandee exists on system' do
+        let(:channel) { spy }
+
+        before do
+          fake_channels = { commandee_id => channel }
+          stub_const 'Aggro', double(aggregate_channels: fake_channels)
+        end
+
+        it 'should return OK' do
+          expect(handler.call).to be_a Message::OK
+        end
+
+        it 'should forward command to the channel' do
+          handler.call
+
+          expect(channel).to have_received(:forward_command).with command
+        end
+      end
+
+      context 'commandee does not exist on system' do
+        it 'should return InvalidTarget' do
+          expect(handler.call).to be_a Message::InvalidTarget
+        end
       end
     end
 

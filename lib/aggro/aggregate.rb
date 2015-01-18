@@ -3,6 +3,17 @@ module Aggro
   module Aggregate
     extend ActiveSupport::Concern
 
+    def initialize(id, events)
+
+    end
+
+    def apply_command(command)
+      if self.class.allows? command.class
+        handler = self.class.handler_for_command(command.class)
+        instance_exec command, &handler
+      end
+    end
+
     # Public: Adds class interface to aggregate.
     module ClassMethods
       def allows(command_class, &block)
@@ -15,6 +26,10 @@ module Aggro
 
       def find(id)
         AggregateRef.new id, name
+      end
+
+      def handler_for_command(command_class)
+        command_handlers[command_class]
       end
 
       private

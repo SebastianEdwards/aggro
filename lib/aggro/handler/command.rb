@@ -3,15 +3,21 @@ module Aggro
     # Private: Handler for incoming command requests.
     class Command < Struct.new(:message, :server)
       def call
-        return handle_foreign unless commandee_local?
-
-        command_known? ? handle_known : handle_unknown
+        commandee_local? ? handle_local : handle_foreign
       end
 
       private
 
+      def channel
+        Aggro.aggregate_channels[commandee_id]
+      end
+
       def command
         @command ||= message.to_command
+      end
+
+      def commandee_id
+        message.commandee_id
       end
 
       def command_known?
@@ -23,7 +29,7 @@ module Aggro
       end
 
       def comandee_locator
-        @comandee_locator ||= Locator.new(message.commandee_id)
+        @comandee_locator ||= Locator.new(commandee_id)
       end
 
       def handle_foreign
@@ -31,7 +37,15 @@ module Aggro
       end
 
       def handle_known
+        channel.forward_command command
+
         Message::OK.new
+      rescue NoMethodError
+        Message::InvalidTarget.new
+      end
+
+      def handle_local
+        command_known? ? handle_known : handle_unknown
       end
 
       def handle_unknown

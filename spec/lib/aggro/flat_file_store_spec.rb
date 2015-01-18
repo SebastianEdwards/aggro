@@ -16,11 +16,11 @@ RSpec.describe FlatFileStore do
 
   describe '#read' do
     before do
-      FlatFileStore.new(STORE_DIR).write [event_stream]
+      FlatFileStore.new(STORE_DIR).create(id, type).write([event_stream])
     end
 
     it 'should be able to restore written data' do
-      restored_stream = store.read([AggregateRef.new(id, type)]).first
+      restored_stream = store.read([id]).first
 
       expect(restored_stream.id).to eq id
       expect(restored_stream.type).to eq type

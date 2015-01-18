@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'activemodel'
   spec.add_runtime_dependency 'activesupport'
+  spec.add_runtime_dependency 'concurrent-ruby'
   spec.add_runtime_dependency 'consistent-hashing'
   spec.add_runtime_dependency 'msgpack'
   spec.add_runtime_dependency 'nn-core'
