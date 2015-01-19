@@ -16,7 +16,7 @@ module Aggro
       FileUtils.mkdir_p @index_directory
 
       @registry_file = [directory, REGISTRY_FILE].join('/')
-      initialize_registry if File.exists? @registry_file
+      initialize_registry if File.exist? @registry_file
     end
 
     def all

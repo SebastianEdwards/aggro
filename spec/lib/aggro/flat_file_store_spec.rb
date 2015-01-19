@@ -24,7 +24,7 @@ RSpec.describe FlatFileStore do
 
       expect(restored_stream.id).to eq id
       expect(restored_stream.type).to eq type
-      expect(restored_stream.events).to eq events
+      expect(restored_stream.events.to_a).to eq events
     end
   end
 

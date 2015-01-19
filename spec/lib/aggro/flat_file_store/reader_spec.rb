@@ -12,11 +12,11 @@ RSpec.describe FlatFileStore::Reader do
 
   describe '#read' do
     context 'files have stored events' do
-      it 'should return an array of events' do
+      it 'should return an Enumerable of events' do
         result = reader.read
 
-        expect(result).to be_a Array
-        expect(result[0]).to eq existing_event
+        expect(result).to respond_to :each
+        expect(result.to_a[0]).to eq existing_event
       end
     end
 
@@ -24,8 +24,8 @@ RSpec.describe FlatFileStore::Reader do
       let(:data_content) { '' }
       let(:index_content) { '' }
 
-      it 'should return an empty array' do
-        expect(reader.read).to eq []
+      it 'should return an empty Enumerable' do
+        expect(reader.read.to_a).to eq []
       end
     end
   end
