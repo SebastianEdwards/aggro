@@ -5,7 +5,8 @@ RSpec.describe Message::InvalidTarget do
 
   describe '.new' do
     it 'should reuse the same singleton object' do
-      expect(Message::InvalidTarget.new.object_id).to eq Message::InvalidTarget.new.object_id
+      expect(Message::InvalidTarget.new.object_id).to eq \
+        Message::InvalidTarget.new.object_id
     end
   end
 
