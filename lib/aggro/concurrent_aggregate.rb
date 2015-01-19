@@ -1,5 +1,6 @@
 module Aggro
-  class ThreadedAggregate < Concurrent::Actor::Context
+  # Private: Wraps a given aggregate in an concurrent actor.
+  class ConcurrentAggregate < Concurrent::Actor::Context
     def initialize(aggregate)
       @aggregate = aggregate
     end

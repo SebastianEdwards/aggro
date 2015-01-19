@@ -26,11 +26,11 @@ require 'aggro/transform/string'
 
 require 'aggro/aggregate'
 require 'aggro/aggregate_channel'
-require 'aggro/aggregate_loader'
 require 'aggro/aggregate_ref'
 require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/command'
+require 'aggro/concurrent_aggregate'
 require 'aggro/event_serializer'
 require 'aggro/flat_file_store'
 require 'aggro/local_node'
@@ -41,7 +41,6 @@ require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
 require 'aggro/server'
-require 'aggro/threaded_aggregate'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
@@ -66,7 +65,7 @@ module Aggro
     if cluster_config.server_node?
       @aggregate_channels ||= begin
         Aggro.store.all.reduce({}) do |channels, stream|
-          channels.merge stream.id => AggregateChannel.new(stream.id)
+          channels.merge stream.id => AggregateChannel.new(stream)
         end
       end
     else
