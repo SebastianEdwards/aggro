@@ -1,5 +1,5 @@
 module Aggro
-  class FlatFileStore < AbstractStore
+  class FileStore < AbstractStore
     # Private: Deserialized events from an IO object.
     class Reader
       def initialize(data_io, index_io)

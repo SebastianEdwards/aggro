@@ -1,5 +1,5 @@
-RSpec.describe FlatFileStore::Reader do
-  subject(:reader) { FlatFileStore::Reader.new data_io, index_io }
+RSpec.describe FileStore::Reader do
+  subject(:reader) { FileStore::Reader.new data_io, index_io }
 
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
   let(:existing_event) { Event.new 'tested_pizza', Time.new(2014), data }

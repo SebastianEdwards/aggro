@@ -1,5 +1,5 @@
-RSpec.describe FlatFileStore::Writer do
-  subject(:writer) { FlatFileStore::Writer.new(data_io, index_io) }
+RSpec.describe FileStore::Writer do
+  subject(:writer) { FileStore::Writer.new(data_io, index_io) }
 
   let(:data_content) { '' }
   let(:index_content) { '' }

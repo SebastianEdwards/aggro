@@ -1,9 +1,9 @@
-require 'aggro/flat_file_store/reader'
-require 'aggro/flat_file_store/writer'
+require 'aggro/file_store/reader'
+require 'aggro/file_store/writer'
 
 module Aggro
   # Public: Stores and retrieves events by serializing them to flat files.
-  class FlatFileStore < AbstractStore
+  class FileStore < AbstractStore
     INDEX_DIRECTORY = 'indexes'.freeze
     EVENT_DIRECTORY = 'events'.freeze
     REGISTRY_FILE = 'registry'.freeze
@@ -42,7 +42,7 @@ module Aggro
 
     def write(event_streams)
       event_streams.each do |stream|
-        FlatFileStore::Writer.new(
+        FileStore::Writer.new(
           event_file(stream.id, 'ab'),
           index_file(stream.id, 'ab')
         ).write stream.events
@@ -64,7 +64,7 @@ module Aggro
     end
 
     def id_to_reader(id)
-      FlatFileStore::Reader.new event_file(id), index_file(id)
+      FileStore::Reader.new event_file(id), index_file(id)
     end
 
     def index_file(id, flags = 'rb')

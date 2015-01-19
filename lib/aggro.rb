@@ -32,7 +32,7 @@ require 'aggro/cluster_config'
 require 'aggro/command'
 require 'aggro/concurrent_aggregate'
 require 'aggro/event_serializer'
-require 'aggro/flat_file_store'
+require 'aggro/file_store'
 require 'aggro/local_node'
 require 'aggro/locator'
 require 'aggro/message_parser'
@@ -119,7 +119,7 @@ module Aggro
   end
 
   def store
-    @store ||= FlatFileStore.new(data_dir)
+    @store ||= FileStore.new(data_dir)
   end
 
   def transport
