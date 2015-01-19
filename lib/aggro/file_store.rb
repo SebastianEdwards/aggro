@@ -79,9 +79,10 @@ module Aggro
     end
 
     def initialize_registry
-      registry_data = File.read(@registry_file)
-      MessagePack.unpack(registry_data).each_slice(2) do |id, type|
-        registry[id] = type
+      File.open(@registry_file) do |file|
+        MessagePack::Unpacker.new(file).each do |id, type|
+          registry[id] = type
+        end
       end
     end
 

@@ -5,7 +5,7 @@ RSpec.describe FileStore do
   let(:index_io) { StringIO.new }
 
   let(:id) { SecureRandom.uuid }
-  let(:type) { 'test' }
+  let(:type) { 'Test' }
 
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
   let(:event_one) { Event.new 'tested_system', Time.new(2015), data }
@@ -13,6 +13,21 @@ RSpec.describe FileStore do
   let(:events) { [event_one, event_two] }
 
   let(:event_stream) { EventStream.new id, type, events }
+
+  describe '#create' do
+    before do
+      FileStore.new(STORE_DIR).create(SecureRandom.uuid, type)
+      FileStore.new(STORE_DIR).create(SecureRandom.uuid, type)
+    end
+
+    it 'should be able to restore written data' do
+      all = store.all
+
+      expect(all.length).to eq 2
+      expect(all.first.type).to eq type
+      expect(all.last.type).to eq type
+    end
+  end
 
   describe '#read' do
     before do
