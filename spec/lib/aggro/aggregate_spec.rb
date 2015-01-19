@@ -1,5 +1,8 @@
 RSpec.describe Aggregate do
-  class TestCommand
+  class GiveSomething
+    include Aggro::Command
+
+    string :thing
   end
 
   class Cat
@@ -8,16 +11,28 @@ RSpec.describe Aggregate do
     attr_reader :executed_self
     attr_reader :executed_command
 
-    allows TestCommand do |command|
+    def things_i_have
+      @things ||= []
+    end
+
+    allows GiveSomething do |command|
       @executed_self = self
       @executed_command = command
+
+      did.gave_thing
+    end
+
+    events do
+      def gave_thing(thing)
+        things_i_have << thing
+      end
     end
   end
 
   subject(:aggregate) { Cat.new(id, []) }
 
   let(:id) { SecureRandom.uuid }
-  let(:command) { TestCommand.new }
+  let(:command) { GiveSomething.new thing: 'milk' }
 
   describe '.allows' do
     it 'should register a command handler' do
@@ -30,7 +45,7 @@ RSpec.describe Aggregate do
   describe '.allows?' do
     context 'input command has a registeded handler' do
       it 'should return true' do
-        expect(Cat.allows?(TestCommand)).to be_truthy
+        expect(Cat.allows?(GiveSomething)).to be_truthy
       end
     end
 
@@ -68,6 +83,12 @@ RSpec.describe Aggregate do
       aggregate.apply_command command
 
       expect(aggregate.executed_command).to eq command
+    end
+
+    it 'should apply events via the #did proxy' do
+      aggregate.apply_command command
+
+      expect(aggregate.things_i_have).to include 'milk'
     end
   end
 end

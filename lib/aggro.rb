@@ -4,6 +4,7 @@ require 'active_model'
 require 'active_support/core_ext/hash/keys'
 require 'concurrent'
 require 'consistent_hashing'
+require 'invokr'
 require 'fileutils'
 require 'msgpack'
 require 'yaml'
@@ -27,6 +28,7 @@ require 'aggro/transform/string'
 require 'aggro/aggregate'
 require 'aggro/aggregate_channel'
 require 'aggro/aggregate_ref'
+require 'aggro/argument_hashifier'
 require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/command'
@@ -112,6 +114,7 @@ module Aggro
     @local_node = nil
     @node_list = nil
     @port = nil
+    @store = nil
   end
 
   def store

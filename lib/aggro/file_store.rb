@@ -51,6 +51,13 @@ module Aggro
       self
     end
 
+    def write_single(id, event)
+      FileStore::Writer.new(
+        event_file(id, 'ab'),
+        index_file(id, 'ab')
+      ).write [event]
+    end
+
     private
 
     def event_file(id, flags = 'rb')

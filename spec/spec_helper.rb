@@ -16,13 +16,13 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    FileUtils.mkdir_p './tmp/test/aggro'
-    Aggro.data_dir = './tmp/test'
     Aggro.reset
+    FileUtils.mkdir_p './tmp/test'
+    Aggro.data_dir = './tmp/test'
   end
 
   config.after(:each) do
-    FileUtils.rm_r './tmp/test/aggro' if File.directory? './tmp/test/aggro'
+    FileUtils.rm_r './tmp/test' if File.exist? './tmp/test'
   end
 end
 
@@ -32,7 +32,7 @@ Aggro.constants.each do |const|
   eval "#{const} = Aggro::#{const}"
 end
 
-STORE_DIR = './tmp/test/aggro/data'
-CLUSTER_CONFIG_PATH = './tmp/test/aggro/cluster.yml'
+STORE_DIR = './tmp/test/data'
+CLUSTER_CONFIG_PATH = './tmp/test/cluster.yml'
 
 Thread.abort_on_exception = true
