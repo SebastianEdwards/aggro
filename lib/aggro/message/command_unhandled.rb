@@ -1,8 +1,8 @@
 module Aggro
   module Message
-    # Public: Unknown command message.
-    class UnknownCommand
-      TYPE_CODE = '04'.freeze
+    # Public: Command unhandled message.
+    class CommandUnhandled
+      TYPE_CODE = '07'.freeze
 
       def self.parse(_string)
         new

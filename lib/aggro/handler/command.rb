@@ -37,9 +37,13 @@ module Aggro
       end
 
       def handle_known
-        channel.forward_command command
+        if channel.handles_command?(command)
+          channel.forward_command command
 
-        Message::OK.new
+          Message::OK.new
+        else
+          Message::CommandUnhandled.new
+        end
       rescue NoMethodError
         Message::InvalidTarget.new
       end
@@ -49,7 +53,7 @@ module Aggro
       end
 
       def handle_unknown
-        Message::UnknownCommand.new
+        Message::CommandUnknown.new
       end
     end
   end

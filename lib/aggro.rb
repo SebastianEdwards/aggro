@@ -12,10 +12,11 @@ require 'aggro/abstract_store'
 
 require 'aggro/message/ask'
 require 'aggro/message/command'
+require 'aggro/message/command_unhandled'
+require 'aggro/message/command_unknown'
 require 'aggro/message/heartbeat'
 require 'aggro/message/invalid_target'
 require 'aggro/message/ok'
-require 'aggro/message/unknown_command'
 
 require 'aggro/handler/command'
 

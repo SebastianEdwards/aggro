@@ -29,21 +29,33 @@ RSpec.describe Handler::Command do
 
     context 'local system knows the command' do
       context 'commandee exists on system' do
-        let(:channel) { spy }
+        let(:channel) { spy handles_command?: handles_command }
 
         before do
           fake_channels = { commandee_id => channel }
           stub_const 'Aggro', double(aggregate_channels: fake_channels)
         end
 
-        it 'should return OK' do
-          expect(handler.call).to be_a Message::OK
+        context 'channel understands command type' do
+          let(:handles_command) { true }
+
+          it 'should return OK' do
+            expect(handler.call).to be_a Message::OK
+          end
+
+          it 'should forward command to the channel' do
+            handler.call
+
+            expect(channel).to have_received(:forward_command).with command
+          end
         end
 
-        it 'should forward command to the channel' do
-          handler.call
+        context 'channel does not understand command type' do
+          let(:handles_command) { false }
 
-          expect(channel).to have_received(:forward_command).with command
+          it 'should return CommandUnhandled' do
+            expect(handler.call).to be_a Message::CommandUnhandled
+          end
         end
       end
 
@@ -55,10 +67,10 @@ RSpec.describe Handler::Command do
     end
 
     context 'local system does not know the command' do
-      it 'should return UnknownCommand' do
+      it 'should return CommandUnknown' do
         allow(message).to receive(:to_command).and_return(nil)
 
-        expect(handler.call).to be_a Message::UnknownCommand
+        expect(handler.call).to be_a Message::CommandUnknown
       end
     end
   end

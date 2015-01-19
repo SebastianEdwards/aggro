@@ -8,6 +8,10 @@ module Aggro
       aggregate << command
     end
 
+    def handles_command?(command)
+      aggregate.class.allows command.class
+    end
+
     private
 
     def aggregate
