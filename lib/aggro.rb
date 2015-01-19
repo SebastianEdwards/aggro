@@ -61,15 +61,15 @@ module Aggro
 
   module_function
 
-  def aggregate_channels
+  def channels
     if cluster_config.server_node?
-      @aggregate_channels ||= begin
+      @channels ||= begin
         Aggro.store.all.reduce({}) do |channels, stream|
           channels.merge stream.id => AggregateChannel.new(stream)
         end
       end
     else
-      @aggregate_channels ||= {}
+      @channels ||= {}
     end
   end
 
@@ -79,10 +79,6 @@ module Aggro
 
   def cluster_config_path
     [data_dir, 'cluster.yml'].join('/')
-  end
-
-  def command_bus
-    @command_bus ||= CommandBus.new
   end
 
   def data_dir

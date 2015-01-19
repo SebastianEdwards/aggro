@@ -9,7 +9,7 @@ module Aggro
       private
 
       def channel
-        Aggro.aggregate_channels[commandee_id]
+        Aggro.channels[commandee_id]
       end
 
       def command

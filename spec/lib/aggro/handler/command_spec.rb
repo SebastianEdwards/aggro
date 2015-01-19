@@ -33,7 +33,7 @@ RSpec.describe Handler::Command do
 
         before do
           fake_channels = { commandee_id => channel }
-          stub_const 'Aggro', double(aggregate_channels: fake_channels)
+          stub_const 'Aggro', double(channels: fake_channels)
         end
 
         context 'channel understands command type' do
