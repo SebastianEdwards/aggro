@@ -5,10 +5,19 @@ RSpec.describe Aggregate do
   class Cat
     include Aggregate
 
+    attr_reader :executed_self
+    attr_reader :executed_command
+
     allows TestCommand do |command|
-      command.thing
+      @executed_self = self
+      @executed_command = command
     end
   end
+
+  subject(:aggregate) { Cat.new(id, []) }
+
+  let(:id) { SecureRandom.uuid }
+  let(:command) { TestCommand.new }
 
   describe '.allows' do
     it 'should register a command handler' do
@@ -45,6 +54,20 @@ RSpec.describe Aggregate do
     it 'should return an AggregateRef for the aggregate' do
       expect(Cat.find(id)).to eq aggregate_ref
       expect(aggregate_ref_class).to have_received(:new).with id, 'Cat'
+    end
+  end
+
+  describe '#apply_command' do
+    it 'should execute the handler with the aggregate as self' do
+      aggregate.apply_command command
+
+      expect(aggregate.executed_self).to eq aggregate
+    end
+
+    it 'should execute the handler with the command as an argument' do
+      aggregate.apply_command command
+
+      expect(aggregate.executed_command).to eq command
     end
   end
 end
