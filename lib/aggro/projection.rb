@@ -4,6 +4,10 @@ module Aggro
     extend ActiveSupport::Concern
     include EventDSL
 
+    def initialize(id)
+      Aggro.event_bus.subscribe(self, id)
+    end
+
     def project
     end
   end

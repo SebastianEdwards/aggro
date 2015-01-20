@@ -2,8 +2,9 @@ module Aggro
   # Private: Provides an interface to communicate with an Aggregate. Only
   #          loads the aggregate when needed.
   class AggregateChannel
-    def initialize(stream)
-      @stream = stream
+    def initialize(id, type)
+      @id = id
+      @type = type
     end
 
     def forward_command(command)
@@ -18,13 +19,13 @@ module Aggro
 
     def aggregate
       @aggregate ||= begin
-        raw_aggregate = aggregate_class.new(@stream.id, @stream.events)
-        ConcurrentAggregate.spawn! @stream.id, raw_aggregate
+        raw_aggregate = aggregate_class.new(@id)
+        ConcurrentAggregate.spawn! @id, raw_aggregate
       end
     end
 
     def aggregate_class
-      @aggregate_class ||= ActiveSupport::Inflector.constantize @stream.type
+      @aggregate_class ||= ActiveSupport::Inflector.constantize @type
     end
   end
 end

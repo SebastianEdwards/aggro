@@ -1,28 +1,17 @@
 module Aggro
   module Handler
     # Private: Handler for incoming command requests.
-    class CreateAggregate < Struct.new(:message, :server)
+    class GetEvents < Struct.new(:message, :server)
       def call
         local? ? handle_local : handle_foreign
       end
 
       private
 
-      def add_to_channels
-        channel = AggregateChannel.new(message.id, message.type)
-        Aggro.channels[message.id] = channel
-      end
-
-      def exists_in_channels?
-        Aggro.channels.keys.include?(message.id)
-      end
-
       def handle_local
-        Aggro.store.create message.id, message.type
+        events = Aggro.store.read([message.id]).first.events
 
-        add_to_channels unless exists_in_channels?
-
-        Message::OK.new
+        Message::Events.new(message.id, events.to_a)
       end
 
       def handle_foreign

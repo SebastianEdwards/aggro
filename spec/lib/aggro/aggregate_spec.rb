@@ -57,10 +57,23 @@ RSpec.describe Aggregate do
     end
   end
 
-  subject(:aggregate) { Cat.new(id, []) }
+  subject(:aggregate) { Cat.new(id) }
 
   let(:id) { SecureRandom.uuid }
   let(:command) { GiveSomething.new thing: 'milk' }
+
+  let(:existing_event) { Event.new(:gave_thing, Time.now, thing: 'cake') }
+  let(:response) { Message::Events.new(id, [existing_event]) }
+  let(:client) { double(post: response) }
+  let(:node) { double(client: client) }
+  let(:fake_locator) { double primary_node: node }
+  let(:locator_class) { double new: fake_locator }
+
+  let(:id) { SecureRandom.uuid }
+
+  before do
+    stub_const 'Aggro::Locator', locator_class
+  end
 
   describe '.allows' do
     it 'should register a command handler' do
@@ -85,11 +98,6 @@ RSpec.describe Aggregate do
   end
 
   describe '.create' do
-    let(:client) { spy(post: response) }
-    let(:node) { double(client: client) }
-    let(:fake_locator) { double primary_node: node }
-    let(:locator_class) { double new: fake_locator }
-
     let(:id) { SecureRandom.uuid }
 
     before do
@@ -148,6 +156,10 @@ RSpec.describe Aggregate do
       expect(aggregate.executed_command).to eq command
     end
 
+    it 'should have the existing event applied' do
+      expect(aggregate.things_i_have).to include 'cake'
+    end
+
     it 'should apply events via the #did proxy' do
       aggregate.apply_command command
 
@@ -157,7 +169,7 @@ RSpec.describe Aggregate do
     it 'should apply event to the projections' do
       aggregate.apply_command command
 
-      expect(aggregate.json).to eq '{"things":["milk"]}'
+      expect(aggregate.json).to eq '{"things":["cake","milk"]}'
     end
   end
 end

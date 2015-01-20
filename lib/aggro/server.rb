@@ -29,6 +29,10 @@ module Aggro
       Handler::CreateAggregate.new(message, self).call
     end
 
+    def handle_get_events(message)
+      Handler::GetEvents.new(message, self).call
+    end
+
     def handle_heartbeat(_message)
       Message::OK.new
     end
@@ -42,6 +46,7 @@ module Aggro
         MessageRouter.new.tap do |router|
           router.attach_handler Message::Command, method(:handle_command)
           router.attach_handler Message::CreateAggregate, method(:handle_create)
+          router.attach_handler Message::GetEvents, method(:handle_get_events)
           router.attach_handler Message::Heartbeat, method(:handle_heartbeat)
         end
       end

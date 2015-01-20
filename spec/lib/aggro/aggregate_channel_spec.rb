@@ -1,7 +1,6 @@
 RSpec.describe AggregateChannel do
-  subject(:channel) { AggregateChannel.new stream }
+  subject(:channel) { AggregateChannel.new id, 'Cat' }
 
-  let(:stream) { EventStream.new(id, 'Cat', []) }
   let(:id) { SecureRandom.uuid }
   let(:cat) { spy }
 

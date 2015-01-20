@@ -1,6 +1,6 @@
 RSpec.describe EventSerializer do
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
-  let(:event) { Event.new 'tested_system', Time.new(2015), data }
+  let(:event) { Event.new :tested_system, Time.new(2015), data }
   describe '.serialize' do
     it 'should convert a hash to some serialized form' do
       serialized = EventSerializer.serialize event
@@ -13,7 +13,7 @@ RSpec.describe EventSerializer do
     it 'should convert serialized data back to the original form' do
       revived = EventSerializer.deserialize EventSerializer.serialize(event)
 
-      expect(revived.name).to eq 'tested_system'
+      expect(revived.name).to eq :tested_system
 
       expect(revived.occured_at).to eq Time.new(2015)
 

@@ -8,8 +8,8 @@ RSpec.describe FileStore do
   let(:type) { 'Test' }
 
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
-  let(:event_one) { Event.new 'tested_system', Time.new(2015), data }
-  let(:event_two) { Event.new 'logged_in', Time.new(2015, 2), data }
+  let(:event_one) { Event.new :tested_system, Time.new(2015), data }
+  let(:event_two) { Event.new :logged_in, Time.new(2015, 2), data }
   let(:events) { [event_one, event_two] }
 
   let(:event_stream) { EventStream.new id, type, events }

@@ -17,12 +17,15 @@ require 'aggro/message/command'
 require 'aggro/message/command_unhandled'
 require 'aggro/message/command_unknown'
 require 'aggro/message/create_aggregate'
+require 'aggro/message/events'
+require 'aggro/message/get_events'
 require 'aggro/message/heartbeat'
 require 'aggro/message/invalid_target'
 require 'aggro/message/ok'
 
 require 'aggro/handler/command'
 require 'aggro/handler/create_aggregate'
+require 'aggro/handler/get_events'
 
 require 'aggro/transform/id'
 require 'aggro/transform/integer'
@@ -31,11 +34,11 @@ require 'aggro/transform/string'
 require 'aggro/aggregate'
 require 'aggro/aggregate_channel'
 require 'aggro/aggregate_ref'
-require 'aggro/argument_hashifier'
 require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/command'
 require 'aggro/concurrent_aggregate'
+require 'aggro/event_bus'
 require 'aggro/event_proxy'
 require 'aggro/event_serializer'
 require 'aggro/file_store'
@@ -71,8 +74,8 @@ module Aggro
   def channels
     if cluster_config.server_node?
       @channels ||= begin
-        Aggro.store.all.reduce({}) do |channels, stream|
-          channels.merge stream.id => AggregateChannel.new(stream)
+        Aggro.store.registry.reduce({}) do |channels, (id, type)|
+          channels.merge id => AggregateChannel.new(id, type)
         end
       end
     else
@@ -94,6 +97,10 @@ module Aggro
         FileUtils.mkdir_p dir
       end
     end
+  end
+
+  def event_bus
+    @event_bus ||= EventBus.new
   end
 
   def local_node

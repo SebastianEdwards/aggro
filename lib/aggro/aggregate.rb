@@ -4,9 +4,15 @@ module Aggro
     extend ActiveSupport::Concern
     include EventDSL
 
-    def initialize(id, events)
+    def initialize(id)
       @id = id
-      events.each { |event| apply_event event }
+
+      @projections = self.class.projections.reduce({}) do |h, (name, klass)|
+        class_eval { define_method(name) { @projections[name].project } }
+        h.merge name => klass.new(id)
+      end
+
+      Aggro.event_bus.subscribe(self, id)
     end
 
     def apply_command(command)
@@ -22,31 +28,8 @@ module Aggro
 
     private
 
-    def apply_event(event)
-      evented.each do |target|
-        if target.handles_event? event.name
-          Invokr.invoke method: event.name, using: event.details, on: target
-        end
-      end
-    end
-
     def did
       @event_caller ||= EventProxy.new(self, @id)
-    end
-
-    def evented
-      @evented ||= [self, projections.values].flatten
-    end
-
-    def projections
-      @projections ||= self.class.projections.reduce({}) do |h, (name, klass)|
-        class_eval do
-          define_method(name) do
-            @projections[name].project
-          end
-        end
-        h.merge name => klass.new
-      end
     end
 
     class_methods do

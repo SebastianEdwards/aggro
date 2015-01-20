@@ -8,7 +8,8 @@ module Aggro
     end
 
     def event_from_hash(hash)
-      Event.new(hash['n'], Time.at(hash['t']), hash['d'].deep_symbolize_keys!)
+      Event.new(hash['n'].to_sym, Time.at(hash['t']),
+                hash['d'].deep_symbolize_keys!)
     end
 
     def serialize(deserialized)

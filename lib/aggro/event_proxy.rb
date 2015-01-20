@@ -9,13 +9,11 @@ module Aggro
     def method_missing(method_sym, *args)
       return unless @aggregate.class.handles_event?(method_sym)
 
-      details = ArgumentHashifier.hashify(parameters_for(method_sym), args)
-      enriched = merge_details_with_command_context(details)
+      details = merge_details_with_command_context(args.pop || {})
+      event = Event.new(method_sym, Time.now, details)
 
-      event = Event.new(method_sym, Time.now, enriched)
       Aggro.store.write_single @id, event
-
-      @aggregate.send :apply_event, event
+      Aggro.event_bus.publish @id, event
     end
 
     private

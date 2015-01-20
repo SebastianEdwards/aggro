@@ -40,6 +40,10 @@ module Aggro
       ids.map { |id| id_to_event_stream id }
     end
 
+    def registry
+      @registry ||= {}
+    end
+
     def write(event_streams)
       event_streams.each do |stream|
         FileStore::Writer.new(
@@ -84,10 +88,6 @@ module Aggro
           registry[id] = type
         end
       end
-    end
-
-    def registry
-      @registry ||= {}
     end
 
     def type_for_id(id)

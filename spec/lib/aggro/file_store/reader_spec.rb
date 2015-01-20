@@ -2,7 +2,7 @@ RSpec.describe FileStore::Reader do
   subject(:reader) { FileStore::Reader.new data_io, index_io }
 
   let(:data) { { one: 9000, two: 'pizza', three: ['foo', 123] } }
-  let(:existing_event) { Event.new 'tested_pizza', Time.new(2014), data }
+  let(:existing_event) { Event.new :tested_pizza, Time.new(2014), data }
 
   let(:data_content) { EventSerializer.serialize(existing_event) }
   let(:index_content) { MessagePack.pack data_content.bytesize }
