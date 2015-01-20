@@ -54,6 +54,24 @@ RSpec.describe Server do
       end
     end
 
+    context 'message is a CreateAggregate' do
+      let(:id) { SecureRandom.uuid }
+      let(:type) { 'Test' }
+      let(:message) { Message::CreateAggregate.new(sender, id, type) }
+
+      it 'should delegate to command handler' do
+        handler = spy(call: true)
+        handler_class = spy(new: handler)
+
+        stub_const 'Aggro::Handler::CreateAggregate', handler_class
+
+        server.handle_message message
+
+        expect(handler_class).to have_received(:new).with(message, server)
+        expect(handler).to have_received(:call)
+      end
+    end
+
     context 'message is a Heartbeat' do
       let(:message) { Message::Heartbeat.new(sender) }
 

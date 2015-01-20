@@ -76,6 +76,17 @@ module Aggro
         command_handlers.keys.include? command_class
       end
 
+      def create(id = SecureRandom.uuid)
+        message = Message::CreateAggregate.new(Aggro.local_node.id, id, name)
+        result = Locator.new(id).primary_node.client.post(message)
+
+        if result.is_a? Message::OK
+          id
+        else
+          fail 'Could not create aggregate'
+        end
+      end
+
       def events(&block)
         test_class = Class.new(BasicObject)
         starting_methods = test_class.instance_methods

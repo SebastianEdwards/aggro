@@ -1,5 +1,5 @@
 RSpec.describe Message::Command do
-  TYPE_CODE = Message::Command::TYPE_CODE
+  COMMAND_TYPE_CODE = Message::Command::TYPE_CODE
 
   let(:sender) { SecureRandom.uuid }
   let(:commandee_id) { SecureRandom.uuid }
@@ -7,7 +7,7 @@ RSpec.describe Message::Command do
   let(:args) { { thing: 'puppy' } }
   let(:details) { { name: 'TestCommand', args: args } }
   let(:binary_details) { MessagePack.pack(details) }
-  let(:string) { TYPE_CODE + sender + commandee_id + binary_details }
+  let(:string) { COMMAND_TYPE_CODE + sender + commandee_id + binary_details }
 
   let(:message) { Message::Command.new(sender, commandee_id, details) }
 

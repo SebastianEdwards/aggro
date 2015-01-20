@@ -56,6 +56,41 @@ RSpec.describe Aggregate do
     end
   end
 
+  describe '.create' do
+    let(:client) { spy(post: response) }
+    let(:node) { double(client: client) }
+    let(:fake_locator) { double primary_node: node }
+    let(:locator_class) { double new: fake_locator }
+
+    let(:id) { SecureRandom.uuid }
+
+    before do
+      stub_const 'Aggro::Locator', locator_class
+    end
+
+    context 'the node also thinks it is the relavent node' do
+      let(:response) { Message::OK.new }
+
+      it 'should send a CreateAggregate message to the relavent node' do
+        Cat.create id
+
+        expect(client).to have_received(:post).with(Message::CreateAggregate)
+      end
+
+      it 'should return the ID of created aggregate' do
+        expect(Cat.create(id)).to eq id
+      end
+    end
+
+    context 'the node does not think it is the right node for id' do
+      let(:response) { Message::Ask.new(SecureRandom.uuid) }
+
+      it 'should send a CreateAggregate message to the relavent node' do
+        expect { Cat.create(id) }.to raise_error
+      end
+    end
+  end
+
   describe '.find' do
     let(:aggregate_ref) { double }
     let(:aggregate_ref_class) { spy(new: aggregate_ref) }
