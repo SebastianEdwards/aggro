@@ -7,7 +7,7 @@ module Aggro
     end
 
     def method_missing(method_sym, *args)
-      return unless @aggregate.class.handles_event?(method_sym)
+      return unless @aggregate.handles_event?(method_sym)
 
       details = merge_details_with_command_context(args.pop || {})
       event = Event.new(method_sym, Time.now, details)
@@ -19,15 +19,7 @@ module Aggro
     private
 
     def merge_details_with_command_context(details)
-      command_context = @aggregate.instance_variable_get(:@_context)
-
-      command_context.merge(details) do |_, context, detail|
-        detail ? detail : context
-      end
-    end
-
-    def parameters_for(method_sym)
-      @aggregate.method(method_sym).parameters
+      @aggregate.instance_variable_get(:@_context).merge(details)
     end
   end
 end

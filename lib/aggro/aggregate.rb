@@ -29,6 +29,8 @@ module Aggro
     private
 
     def did
+      fail 'Must be called within a command handler' unless @_context
+
       @event_caller ||= EventProxy.new(self, @id)
     end
 
