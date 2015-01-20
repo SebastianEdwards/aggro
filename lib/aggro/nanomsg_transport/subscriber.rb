@@ -1,10 +1,10 @@
-require 'aggro/nanomsg_transport/reply'
+require 'aggro/nanomsg_transport/subscribe'
 
 module Aggro
   module NanomsgTransport
-    # Public: Server to handle messages from nanomsg clients.
-    class Server
-      class ServerAlreadyRunning < RuntimeError; end
+    # Public: Handles subscribing to messages on a given endpoint.
+    class Subscriber
+      class SubscriberAlreadyRunning < RuntimeError; end
 
       def initialize(endpoint, callable = nil, &block)
         if callable
@@ -19,8 +19,14 @@ module Aggro
         @endpoint = endpoint
       end
 
+      def add_subscription(topic)
+        sub_queue << topic
+
+        self
+      end
+
       def start
-        fail ServerAlreadyRunning if @running
+        fail SubscriberAlreadyRunning if @running
 
         @running = true
         @terminated = false
@@ -42,16 +48,22 @@ module Aggro
 
       def start_on_thread
         Thread.new do
-          reply_socket = Reply.new(@endpoint)
+          sub_socket = Subscribe.new(@endpoint)
 
           while @running
-            message = reply_socket.recv_msg
-            reply_socket.send_msg @callable.call(message) if message
+            sub_socket.add_subscription sub_queue.pop until sub_queue.empty?
+
+            message = sub_socket.recv_msg
+            @callable.call(message) if message
           end
 
-          reply_socket.terminate
+          sub_socket.terminate
           @terminated = true
         end
+      end
+
+      def sub_queue
+        @sub_queue ||= Queue.new
       end
     end
   end

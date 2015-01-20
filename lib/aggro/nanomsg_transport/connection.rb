@@ -56,12 +56,22 @@ module Aggro
         fail SocketError.new NNCore::LibNanomsg.nn_errno unless rc >= 0
       end
 
-      def set_socket_option(setting, value)
-        option = FFI::MemoryPointer.new(:int32)
+      def prepare_socket_option(value)
+        if value.is_a? String
+          [value, value.bytesize]
+        else
+          option = FFI::MemoryPointer.new(:int32)
+          option.write_int(value)
 
-        option.write_int(value)
-        rc = NNCore::LibNanomsg.nn_setsockopt(@socket, NNCore::NN_SOL_SOCKET,
-                                              setting, option, 4)
+          [option, 4]
+        end
+      end
+
+      def set_socket_option(setting, value, level = NNCore::NN_SOL_SOCKET)
+        option, option_length = prepare_socket_option(value)
+
+        rc = NNCore::LibNanomsg.nn_setsockopt(@socket, level, setting,
+                                              option, option_length)
         assert(rc)
       end
     end
