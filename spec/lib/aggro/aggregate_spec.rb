@@ -1,8 +1,34 @@
+require 'json'
+
 RSpec.describe Aggregate do
   class GiveSomething
     include Aggro::Command
 
     string :thing
+  end
+
+  class CatSerializer
+    include Aggro::Projection
+
+    def project
+      JSON.dump data
+    end
+
+    events do
+      def gave_thing(thing)
+        things << thing
+      end
+    end
+
+    private
+
+    def data
+      @data ||= { things: things }
+    end
+
+    def things
+      @things ||= []
+    end
   end
 
   class Cat
@@ -14,6 +40,8 @@ RSpec.describe Aggregate do
     def things_i_have
       @things ||= []
     end
+
+    projection :json, via: CatSerializer
 
     allows GiveSomething do |command|
       @executed_self = self
@@ -124,6 +152,12 @@ RSpec.describe Aggregate do
       aggregate.apply_command command
 
       expect(aggregate.things_i_have).to include 'milk'
+    end
+
+    it 'should apply event to the projections' do
+      aggregate.apply_command command
+
+      expect(aggregate.json).to eq '{"things":["milk"]}'
     end
   end
 end

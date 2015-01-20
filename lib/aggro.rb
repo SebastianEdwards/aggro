@@ -10,6 +10,7 @@ require 'msgpack'
 require 'yaml'
 
 require 'aggro/abstract_store'
+require 'aggro/event_dsl'
 
 require 'aggro/message/ask'
 require 'aggro/message/command'
@@ -35,6 +36,7 @@ require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/command'
 require 'aggro/concurrent_aggregate'
+require 'aggro/event_proxy'
 require 'aggro/event_serializer'
 require 'aggro/file_store'
 require 'aggro/local_node'
@@ -44,6 +46,7 @@ require 'aggro/message_router'
 require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
+require 'aggro/projection'
 require 'aggro/server'
 
 # Public: Module for namespacing and configuration methods.
