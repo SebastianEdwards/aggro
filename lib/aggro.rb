@@ -98,7 +98,7 @@ module Aggro
 
   def data_dir
     @data_dir ||= begin
-      './tmp/aggro'.tap do |dir|
+      ENV.fetch('AGGRO_DIR') { './tmp/aggro' }.tap do |dir|
         FileUtils.mkdir_p dir
       end
     end
