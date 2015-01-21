@@ -4,6 +4,11 @@ module Aggro
     extend ActiveSupport::Concern
     include ActiveModel::Model
 
+    included do
+      generate_id :causation_id
+      generate_id :correlation_id
+    end
+
     def attributes
       self.class.attributes.keys.reduce({}) do |hash, name|
         hash.merge name => send(name)
