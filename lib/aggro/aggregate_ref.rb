@@ -16,7 +16,7 @@ module Aggro
     private
 
     def build_command(command)
-      Message::Command.new(Aggro.local_node, id, command.to_details)
+      Message::Command.new(Aggro.local_node.id, id, command.to_details)
     end
 
     def locator

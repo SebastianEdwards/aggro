@@ -3,13 +3,12 @@ module Aggro
   class EventBus
     Subscription = Struct.new(:subscriber, :namespace, :at_version)
 
-    def initialize(publisher = Aggro.local_node.publisher)
-      @publisher = publisher
+    def initialize
       @remote_publishers = {}
     end
 
     def publish(topic, event)
-      @publisher.publish topic, [event]
+      Aggro.server.publish Message::Events.new(topic, [event])
 
       return unless subscriptions.key? topic
 

@@ -53,12 +53,13 @@ require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
 require 'aggro/projection'
-require 'aggro/publisher'
 require 'aggro/server'
 require 'aggro/subscriber'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
+  ClientNode = Struct.new(:id)
+
   Event = Struct.new(:name, :occured_at, :details)
   EventStream = Struct.new(:id, :type, :events)
 
@@ -109,8 +110,10 @@ module Aggro
   end
 
   def local_node
-    @local_node ||= begin
-      LocalNode.new(cluster_config.node_name).tap(&:bind_publisher)
+    if cluster_config.server_node?
+      @local_node ||= LocalNode.new(cluster_config.node_name)
+    else
+      @local_node ||= ClientNode.new(SecureRandom.uuid)
     end
   end
 
@@ -137,8 +140,16 @@ module Aggro
     @local_node = nil
     @node_list = nil
     @port = nil
+    @publisher = nil
     @publisher_port = nil
+    @server = nil
     @store = nil
+  end
+
+  def server
+    return unless cluster_config.server_node?
+
+    @server ||= Server.new(local_node.endpoint, local_node.publisher_endpoint)
   end
 
   def store

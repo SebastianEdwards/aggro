@@ -72,8 +72,11 @@ RSpec.describe Aggregate do
 
   let(:id) { SecureRandom.uuid }
 
+  let(:fake_server) { spy publish: true }
+
   before do
     stub_const 'Aggro::Locator', locator_class
+    allow(Aggro).to receive(:server).and_return fake_server
   end
 
   describe '.allows' do

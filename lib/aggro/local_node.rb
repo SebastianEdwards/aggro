@@ -1,14 +1,6 @@
 module Aggro
   # Public: Represents the local aggro server node.
   class LocalNode < Struct.new(:id)
-    def bind_publisher
-      publisher
-    end
-
-    def bind_server
-      server.bind
-    end
-
     def client
       @client ||= create_loopback_client
     end
@@ -17,16 +9,8 @@ module Aggro
       "tcp://127.0.0.1:#{Aggro.port}"
     end
 
-    def publisher
-      @publisher ||= Publisher.new(publisher_endpoint)
-    end
-
     def publisher_endpoint
       "tcp://127.0.0.1:#{Aggro.publisher_port}"
-    end
-
-    def stop_server
-      server.stop
     end
 
     def to_s
@@ -36,13 +20,9 @@ module Aggro
     private
 
     def create_loopback_client
-      ->(msg) { server.handle_message msg }.tap do |proc|
+      ->(msg) { Aggro.server.handle_message msg }.tap do |proc|
         proc.class_eval { alias_method :post, :call }
       end
-    end
-
-    def server
-      @server ||= Server.new(endpoint)
     end
   end
 end

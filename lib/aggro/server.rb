@@ -11,20 +11,30 @@ module Aggro
       Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry
     }
 
-    def initialize(endpoint)
+    def initialize(endpoint, publisher_endpoint)
+      @endpoint = endpoint
+      @publisher_endpoint = publisher_endpoint
+
       @transport_server = Aggro.transport.server endpoint, method(RAW_HANDLER)
+      @transport_publisher = Aggro.transport.publisher publisher_endpoint
     end
 
     def bind
       @transport_server.start
+      @transport_publisher.open_socket
     end
 
     def handle_message(message)
       message_router.route message
     end
 
+    def publish(message)
+      @transport_publisher.publish message
+    end
+
     def stop
       @transport_server.stop
+      @transport_publisher.close_socket
     end
 
     private
@@ -46,7 +56,7 @@ module Aggro
     end
 
     def handle_publisher_endpoint_inquiry(_message)
-      Message::Endpoint.new Aggro.local_node.publisher_endpoint
+      Message::Endpoint.new @publisher_endpoint
     end
 
     def handle_raw(raw)
@@ -59,6 +69,10 @@ module Aggro
           HANDLERS.each { |type, sym| router.attach_handler type, method(sym) }
         end
       end
+    end
+
+    def publisher
+      @publisher ||= Publisher.new(local_node.publisher_endpoint)
     end
   end
 end

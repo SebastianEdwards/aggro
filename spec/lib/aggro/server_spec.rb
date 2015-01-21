@@ -1,9 +1,11 @@
 RSpec.describe Server do
-  subject(:server) { Server.new(endpoint) }
+  subject(:server) { Server.new endpoint, publisher_endpoint }
 
   let(:endpoint) { 'tcp://127.0.0.1:5000' }
+  let(:publisher_endpoint) { 'tcp://127.0.0.1:6000' }
   let(:transport_server) { spy }
-  let(:transport) { spy(server: transport_server) }
+  let(:transport_pub) { spy(publish: true) }
+  let(:transport) { spy(server: transport_server, publisher: transport_pub) }
 
   before do
     allow(Aggro).to receive(:transport).and_return transport
@@ -23,6 +25,12 @@ RSpec.describe Server do
 
       expect(handler.call(raw_message)).to be_a Message::OK
     end
+
+    it 'should start a publisher for the node using the current transport' do
+      server
+
+      expect(transport).to have_received(:publisher).with(publisher_endpoint)
+    end
   end
 
   describe '#bind' do
@@ -30,6 +38,14 @@ RSpec.describe Server do
       server.bind
 
       expect(transport_server).to have_received(:start)
+    end
+  end
+
+  describe '#publish' do
+    it 'publish the events to the publisher transport' do
+      server.publish :events
+
+      expect(transport_pub).to have_received(:publish).with :events
     end
   end
 
@@ -87,7 +103,7 @@ RSpec.describe Server do
         response = server.handle_message(message)
 
         expect(response).to be_a Message::Endpoint
-        expect(response.endpoint).to eq Aggro.local_node.publisher_endpoint
+        expect(response.endpoint).to eq publisher_endpoint
       end
     end
   end

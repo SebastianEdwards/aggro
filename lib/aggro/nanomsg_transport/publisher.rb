@@ -8,13 +8,19 @@ module Aggro
         ObjectSpace.define_finalizer self, method(:close_socket)
 
         @endpoint = endpoint
-        pub_socket
       end
 
       def close_socket
         pub_socket.terminate if @open
         @pub_socket = nil
         @open = false
+      end
+
+      def open_socket
+        return @pub_socket if @open
+
+        @open = true
+        @pub_socket = Publish.new(@endpoint)
       end
 
       def publish(message)
@@ -24,10 +30,7 @@ module Aggro
       private
 
       def pub_socket
-        @pub_socket ||= begin
-          @open = true
-          Publish.new(@endpoint)
-        end
+        @pub_socket || open_socket
       end
     end
   end

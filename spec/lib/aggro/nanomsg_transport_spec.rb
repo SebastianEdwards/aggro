@@ -1,5 +1,5 @@
 RSpec.describe NanomsgTransport do
-  let(:host) { 'tcp://127.0.0.1:7000' }
+  let(:host) { 'tcp://127.0.0.1:7250' }
   let(:message) { SecureRandom.hex }
 
   it 'should work for REQREP' do
@@ -16,6 +16,8 @@ RSpec.describe NanomsgTransport do
 
   it 'should work for PUBSUB' do
     publisher = NanomsgTransport.publisher(host)
+    publisher.open_socket
+
     @reced = []
 
     subscriber = NanomsgTransport.subscriber(host) { |rec| @reced << rec }
