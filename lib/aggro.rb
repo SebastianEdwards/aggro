@@ -137,6 +137,7 @@ module Aggro
     @local_node = nil
     @node_list = nil
     @port = nil
+    @publisher_port = nil
     @store = nil
   end
 

@@ -65,7 +65,7 @@ RSpec.describe Aggregate do
   let(:existing_event) { Event.new(:gave_thing, Time.now, thing: 'cake') }
   let(:response) { Message::Events.new(id, [existing_event]) }
   let(:client) { double(post: response) }
-  let(:publisher_endpoint) { 'tcp://127.0.0.1:8000' }
+  let(:publisher_endpoint) { 'tcp://127.0.0.1:6000' }
   let(:node) { double(client: client, publisher_endpoint: publisher_endpoint) }
   let(:fake_locator) { double primary_node: node }
   let(:locator_class) { double new: fake_locator }
