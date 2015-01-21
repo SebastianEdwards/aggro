@@ -18,7 +18,7 @@ module Aggro
     def apply_command(command)
       return unless self.class.allows? command.class
 
-      @_context = command.to_details[:args]
+      @_context = command.attributes
 
       handler = self.class.handler_for_command(command.class)
       instance_exec command, &handler
