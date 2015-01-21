@@ -29,6 +29,7 @@ require 'aggro/handler/command'
 require 'aggro/handler/create_aggregate'
 require 'aggro/handler/get_events'
 
+require 'aggro/transform/email'
 require 'aggro/transform/id'
 require 'aggro/transform/integer'
 require 'aggro/transform/string'
