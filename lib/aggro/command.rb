@@ -3,6 +3,7 @@ module Aggro
   module Command
     extend ActiveSupport::Concern
     include ActiveModel::Model
+    include ActiveModel::Validations::Callbacks
 
     included do
       generate_id :causation_id
