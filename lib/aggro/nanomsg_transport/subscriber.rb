@@ -47,7 +47,7 @@ module Aggro
       private
 
       def start_on_thread
-        Thread.new do
+        Concurrent.configuration.global_task_pool.post do
           sub_socket = Subscribe.new(@endpoint)
 
           while @running

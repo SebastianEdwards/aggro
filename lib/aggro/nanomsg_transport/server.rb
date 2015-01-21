@@ -41,7 +41,7 @@ module Aggro
       private
 
       def start_on_thread
-        Thread.new do
+        Concurrent.configuration.global_task_pool.post do
           reply_socket = Reply.new(@endpoint)
 
           while @running
