@@ -1,14 +1,16 @@
-module Transform
-  # Private: Transforms string representations.
-  module String
-    module_function
+module Aggro
+  module Transform
+    # Private: Transforms string representations.
+    module String
+      module_function
 
-    def deserialize(value)
-      value.to_s
-    end
+      def deserialize(value)
+        value.to_s
+      end
 
-    def serialize(value)
-      value.to_s
+      def serialize(value)
+        value.to_s
+      end
     end
   end
 end

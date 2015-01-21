@@ -1,32 +1,34 @@
-module Transform
-  # Private: Transforms integer representations.
-  class ID
-    ID_REGEX = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+module Aggro
+  module Transform
+    # Private: Transforms integer representations.
+    class ID
+      ID_REGEX = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 
-    def initialize(generate: false)
-      @generate = generate
-    end
+      def initialize(generate: false)
+        @generate = generate
+      end
 
-    def deserialize(value)
-      value = value.to_s
+      def deserialize(value)
+        value = value.to_s
 
-      return value if value.match(ID_REGEX)
+        return value if value.match(ID_REGEX)
 
-      generate_id if should_generate_id?
-    end
+        generate_id if should_generate_id?
+      end
 
-    def serialize(value)
-      deserialize value
-    end
+      def serialize(value)
+        deserialize value
+      end
 
-    private
+      private
 
-    def generate_id
-      @generated_id ||= SecureRandom.uuid
-    end
+      def generate_id
+        @generated_id ||= SecureRandom.uuid
+      end
 
-    def should_generate_id?
-      @generate == true
+      def should_generate_id?
+        @generate == true
+      end
     end
   end
 end
