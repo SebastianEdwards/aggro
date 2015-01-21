@@ -2,7 +2,7 @@ module Aggro
   module Message
     # Public: Get events message.
     class Events < Struct.new(:id, :events)
-      TYPE_CODE = '09'.freeze
+      TYPE_CODE = '10'.freeze
 
       def self.parse(string)
         new string[2..37], parse_events(string[38..-1])

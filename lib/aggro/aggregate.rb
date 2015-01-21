@@ -12,7 +12,7 @@ module Aggro
         h.merge name => klass.new(id)
       end
 
-      Aggro.event_bus.subscribe(self, id)
+      Aggro.event_bus.subscribe(id, self)
     end
 
     def apply_command(command)

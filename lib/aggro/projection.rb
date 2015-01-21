@@ -5,7 +5,7 @@ module Aggro
     include EventDSL
 
     def initialize(id)
-      Aggro.event_bus.subscribe(self, id)
+      Aggro.event_bus.subscribe(id, self)
     end
 
     def project

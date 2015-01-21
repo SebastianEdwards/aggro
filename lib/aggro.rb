@@ -17,11 +17,13 @@ require 'aggro/message/command'
 require 'aggro/message/command_unhandled'
 require 'aggro/message/command_unknown'
 require 'aggro/message/create_aggregate'
+require 'aggro/message/endpoint'
 require 'aggro/message/events'
 require 'aggro/message/get_events'
 require 'aggro/message/heartbeat'
 require 'aggro/message/invalid_target'
 require 'aggro/message/ok'
+require 'aggro/message/publisher_endpoint_inquiry'
 
 require 'aggro/handler/command'
 require 'aggro/handler/create_aggregate'
@@ -50,7 +52,9 @@ require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
 require 'aggro/projection'
+require 'aggro/publisher'
 require 'aggro/server'
+require 'aggro/subscriber'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
@@ -104,7 +108,9 @@ module Aggro
   end
 
   def local_node
-    @local_node ||= LocalNode.new(cluster_config.node_name)
+    @local_node ||= begin
+      LocalNode.new(cluster_config.node_name).tap(&:bind_publisher)
+    end
   end
 
   def node_list
@@ -119,6 +125,10 @@ module Aggro
 
   def port
     @port ||= ENV.fetch('PORT') { 5000 }.to_i
+  end
+
+  def publisher_port
+    @publisher_port ||= ENV.fetch('PUBLISHER_PORT') { 6000 }.to_i
   end
 
   def reset

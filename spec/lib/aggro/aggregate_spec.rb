@@ -65,7 +65,8 @@ RSpec.describe Aggregate do
   let(:existing_event) { Event.new(:gave_thing, Time.now, thing: 'cake') }
   let(:response) { Message::Events.new(id, [existing_event]) }
   let(:client) { double(post: response) }
-  let(:node) { double(client: client) }
+  let(:publisher_endpoint) { 'tcp://127.0.0.1:8000' }
+  let(:node) { double(client: client, publisher_endpoint: publisher_endpoint) }
   let(:fake_locator) { double primary_node: node }
   let(:locator_class) { double new: fake_locator }
 
@@ -140,6 +141,20 @@ RSpec.describe Aggregate do
     it 'should return an AggregateRef for the aggregate' do
       expect(Cat.find(id)).to eq aggregate_ref
       expect(aggregate_ref_class).to have_received(:new).with id, 'Cat'
+    end
+  end
+
+  describe '.new' do
+    let(:fake_event_bus) { spy }
+
+    before do
+      allow(Aggro).to receive(:event_bus).and_return(fake_event_bus)
+    end
+
+    it 'should subscribe itself to events for the given ID' do
+      aggregate
+
+      expect(fake_event_bus).to have_received(:subscribe).with(id, aggregate)
     end
   end
 

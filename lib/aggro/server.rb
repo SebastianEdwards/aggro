@@ -3,6 +3,14 @@ module Aggro
   class Server
     RAW_HANDLER = :handle_raw
 
+    HANDLERS = {
+      Message::Command                  => :handle_command,
+      Message::CreateAggregate          => :handle_create,
+      Message::GetEvents                => :handle_get_events,
+      Message::Heartbeat                => :handle_heartbeat,
+      Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry
+    }
+
     def initialize(endpoint)
       @transport_server = Aggro.transport.server endpoint, method(RAW_HANDLER)
     end
@@ -37,6 +45,10 @@ module Aggro
       Message::OK.new
     end
 
+    def handle_publisher_endpoint_inquiry(_message)
+      Message::Endpoint.new Aggro.local_node.publisher_endpoint
+    end
+
     def handle_raw(raw)
       handle_message MessageParser.parse raw
     end
@@ -44,10 +56,7 @@ module Aggro
     def message_router
       @message_router ||= begin
         MessageRouter.new.tap do |router|
-          router.attach_handler Message::Command, method(:handle_command)
-          router.attach_handler Message::CreateAggregate, method(:handle_create)
-          router.attach_handler Message::GetEvents, method(:handle_get_events)
-          router.attach_handler Message::Heartbeat, method(:handle_heartbeat)
+          HANDLERS.each { |type, sym| router.attach_handler type, method(sym) }
         end
       end
     end

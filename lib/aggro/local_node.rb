@@ -1,6 +1,10 @@
 module Aggro
   # Public: Represents the local aggro server node.
   class LocalNode < Struct.new(:id)
+    def bind_publisher
+      publisher
+    end
+
     def bind_server
       server.bind
     end
@@ -11,6 +15,14 @@ module Aggro
 
     def endpoint
       "tcp://127.0.0.1:#{Aggro.port}"
+    end
+
+    def publisher
+      @publisher ||= Publisher.new(publisher_endpoint)
+    end
+
+    def publisher_endpoint
+      "tcp://127.0.0.1:#{Aggro.publisher_port}"
     end
 
     def stop_server

@@ -34,6 +34,22 @@ RSpec.describe LocalNode do
     end
   end
 
+  describe '#publisher' do
+    it 'should return a Publisher' do
+      expect(node.publisher).to be_a Publisher
+    end
+  end
+
+  describe '#publisher_endpoint' do
+    before do
+      allow(Aggro).to receive(:publisher_port).and_return 7000
+    end
+
+    it 'should have a local TCP endpoint with the correct port' do
+      expect(node.publisher_endpoint).to eq 'tcp://127.0.0.1:7000'
+    end
+  end
+
   describe '#stop_server' do
     it 'should send a stop message to the server' do
       stub_const 'Aggro::Server', double(new: fake_server)

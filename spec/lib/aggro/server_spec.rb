@@ -79,6 +79,17 @@ RSpec.describe Server do
         expect(server.handle_message(message)).to be_a Message::OK
       end
     end
+
+    context 'message is a PublisherEndpointInquiry' do
+      let(:message) { Message::PublisherEndpointInquiry.new(sender) }
+
+      it 'should return an Endpoint message with the publisher endpoint' do
+        response = server.handle_message(message)
+
+        expect(response).to be_a Message::Endpoint
+        expect(response.endpoint).to eq Aggro.local_node.publisher_endpoint
+      end
+    end
   end
 
   describe '#stop' do
