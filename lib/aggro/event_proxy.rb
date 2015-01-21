@@ -7,8 +7,6 @@ module Aggro
     end
 
     def method_missing(method_sym, *args)
-      return unless @aggregate.handles_event?(method_sym)
-
       details = merge_details_with_command_context(args.pop || {})
       event = Event.new(method_sym, Time.now, details)
 
