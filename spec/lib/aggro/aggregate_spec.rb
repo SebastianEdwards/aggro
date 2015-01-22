@@ -103,9 +103,12 @@ RSpec.describe Aggregate do
 
   describe '.create' do
     let(:id) { SecureRandom.uuid }
+    let(:aggregate_ref) { double }
+    let(:aggregate_ref_class) { spy(new: aggregate_ref) }
 
     before do
       stub_const 'Aggro::Locator', locator_class
+      stub_const 'Aggro::AggregateRef', aggregate_ref_class
     end
 
     context 'the node also thinks it is the relavent node' do
@@ -117,8 +120,9 @@ RSpec.describe Aggregate do
         expect(client).to have_received(:post).with(Message::CreateAggregate)
       end
 
-      it 'should return the ID of created aggregate' do
-        expect(Cat.create(id)).to eq id
+      it 'should return an AggregateRef for the aggregate' do
+        expect(Cat.create(id)).to eq aggregate_ref
+        expect(aggregate_ref_class).to have_received(:new).with id, 'Cat'
       end
     end
 

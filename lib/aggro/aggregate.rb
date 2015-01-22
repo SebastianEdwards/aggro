@@ -48,7 +48,7 @@ module Aggro
         result = Locator.new(id).primary_node.client.post(message)
 
         if result.is_a? Message::OK
-          id
+          find(id)
         else
           fail 'Could not create aggregate'
         end
