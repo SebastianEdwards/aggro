@@ -25,11 +25,13 @@ require 'aggro/message/heartbeat'
 require 'aggro/message/invalid_target'
 require 'aggro/message/ok'
 require 'aggro/message/publisher_endpoint_inquiry'
+require 'aggro/message/saga_unknown'
 require 'aggro/message/start_saga'
 
 require 'aggro/handler/command'
 require 'aggro/handler/create_aggregate'
 require 'aggro/handler/get_events'
+require 'aggro/handler/start_saga'
 
 require 'aggro/transform/email'
 require 'aggro/transform/id'
@@ -37,12 +39,14 @@ require 'aggro/transform/integer'
 require 'aggro/transform/string'
 
 require 'aggro/aggregate'
-require 'aggro/aggregate_channel'
 require 'aggro/aggregate_ref'
+require 'aggro/binding_dsl'
+require 'aggro/block_helper'
+require 'aggro/channel'
 require 'aggro/client'
 require 'aggro/cluster_config'
 require 'aggro/command'
-require 'aggro/concurrent_aggregate'
+require 'aggro/concurrent_actor'
 require 'aggro/event_bus'
 require 'aggro/event_proxy'
 require 'aggro/event_serializer'
@@ -85,7 +89,7 @@ module Aggro
     if cluster_config.server_node?
       @channels ||= begin
         Aggro.store.registry.reduce({}) do |channels, (id, type)|
-          channels.merge id => AggregateChannel.new(id, type)
+          channels.merge id => Channel.new(id, type)
         end
       end
     else

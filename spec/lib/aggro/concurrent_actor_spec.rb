@@ -1,16 +1,14 @@
-RSpec.describe ConcurrentAggregate do
-  subject(:actor) { ConcurrentAggregate.new aggregate }
+RSpec.describe ConcurrentActor do
+  subject(:actor) { ConcurrentActor.new aggregate }
 
-  let(:aggregate) { spy }
-
-  class GreatCommand
-    include Command
-  end
+  let(:aggregate) { spy class: aggregate_class }
 
   describe '#on_message' do
-    context 'the message is a command' do
+    context 'the aggregate allows message' do
+      let(:aggregate_class) { double allows?: true }
+
       it 'should send the message to the aggregate' do
-        message = GreatCommand.new
+        message = 'hello'
 
         actor.on_message message
 
@@ -18,7 +16,9 @@ RSpec.describe ConcurrentAggregate do
       end
     end
 
-    context 'the message is not a command' do
+    context 'the aggregate does not allow message' do
+      let(:aggregate_class) { double allows?: false }
+
       it 'should not send the message to the aggregate' do
         actor.on_message :terminate!
 

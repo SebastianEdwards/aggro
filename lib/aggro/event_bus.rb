@@ -46,8 +46,8 @@ module Aggro
     def invoke(subscription, event)
       return unless subscription_handles_event?(subscription, event.name)
 
-      Invokr.invoke method: event.name, using: event.details,
-                    on: subscription.subscriber
+      Invokr.invoke method: "#{subscription.namespace}_#{event.name}",
+                    using: event.details, on: subscription.subscriber
     end
 
     def handle_events(topic, events)

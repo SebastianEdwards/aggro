@@ -33,7 +33,7 @@ module Aggro
       end
 
       def handle_foreign
-        Message::Ask.new comandee_locator.primary_node.id
+        comandee_locator.primary_node.client.post message
       end
 
       def handle_known

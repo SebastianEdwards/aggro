@@ -1,12 +1,12 @@
-RSpec.describe AggregateChannel do
-  subject(:channel) { AggregateChannel.new id, 'Cat' }
+RSpec.describe Channel do
+  subject(:channel) { Channel.new id, 'Cat' }
 
   let(:id) { SecureRandom.uuid }
   let(:cat) { spy }
 
   before do
     stub_const 'Cat', double(new: double, allows?: allowed)
-    stub_const 'Aggro::ConcurrentAggregate', double(spawn!: cat)
+    stub_const 'Aggro::ConcurrentActor', double(spawn!: cat)
   end
 
   describe '#forward_command' do

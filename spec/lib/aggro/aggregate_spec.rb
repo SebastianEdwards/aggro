@@ -83,20 +83,20 @@ RSpec.describe Aggregate do
     it 'should register a command handler' do
       Cat.allows(Fixnum) { true }
 
-      expect(Cat.allows?(Fixnum)).to be_truthy
+      expect(Cat.allows?(1)).to be_truthy
     end
   end
 
   describe '.allows?' do
     context 'input command has a registeded handler' do
       it 'should return true' do
-        expect(Cat.allows?(GiveSomething)).to be_truthy
+        expect(Cat.allows?(GiveSomething.new)).to be_truthy
       end
     end
 
     context 'input command does not have a registed handler' do
       it 'should return false' do
-        expect(Cat.allows?(String)).to be_falsey
+        expect(Cat.allows?('')).to be_falsey
       end
     end
   end
@@ -167,13 +167,13 @@ RSpec.describe Aggregate do
 
   describe '#apply_command' do
     it 'should execute the handler with the aggregate as self' do
-      aggregate.apply_command command
+      aggregate.send :apply_command, command
 
       expect(aggregate.executed_self).to eq aggregate
     end
 
     it 'should execute the handler with the command as an argument' do
-      aggregate.apply_command command
+      aggregate.send :apply_command, command
 
       expect(aggregate.executed_command).to eq command
     end
@@ -183,13 +183,13 @@ RSpec.describe Aggregate do
     end
 
     it 'should apply events via the #did proxy' do
-      aggregate.apply_command command
+      aggregate.send :apply_command, command
 
       expect(aggregate.things_i_have).to include 'milk'
     end
 
     it 'should apply event to the projections' do
-      aggregate.apply_command command
+      aggregate.send :apply_command, command
 
       expect(aggregate.json).to eq '{"things":["cake","milk"]}'
     end

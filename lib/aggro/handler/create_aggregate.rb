@@ -9,7 +9,7 @@ module Aggro
       private
 
       def add_to_channels
-        channel = AggregateChannel.new(message.id, message.type)
+        channel = Channel.new(message.id, message.type)
         Aggro.channels[message.id] = channel
       end
 

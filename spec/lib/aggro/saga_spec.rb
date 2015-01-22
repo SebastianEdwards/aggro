@@ -49,11 +49,14 @@ RSpec.describe Saga do
     id :oven_id
     string :dough_type
 
+    initial :prepare_dough
+
     step :prepare_dough do
       pizza = Pizza.create(pizza_id)
       command = StartPizza.new(dough_type: dough_type)
       pizza.send_command(command)
-      pizza.bind(correlation_id: correlation_id) do
+
+      bind pizza do
         def started_to_be_made
           transition_to :add_toppings
         end
@@ -76,8 +79,11 @@ RSpec.describe Saga do
   let(:oven_id) { SecureRandom.uuid }
 
   let(:events_response) { Message::Events.new saga.saga_id, [] }
+  let(:pizza_id) { SecureRandom.uuid }
+  let(:existing_event) { Event.new(:tested_system, Time.now, {}) }
+  let(:pizza_events) { Message::Events.new pizza_id, [existing_event] }
   let(:ok_response) { Message::OK.new }
-  let(:client) { double }
+  let(:client) { double post: pizza_events }
   let(:publisher_endpoint) { 'tcp://127.0.0.1:6000' }
   let(:node) { double(client: client, publisher_endpoint: publisher_endpoint) }
   let(:fake_locator) { double primary_node: node }
@@ -85,10 +91,25 @@ RSpec.describe Saga do
 
   before do
     stub_const 'Aggro::Locator', locator_class
-    allow(client).to receive(:post).and_return events_response, ok_response
+  end
+
+  describe '#apply_command' do
+    let(:pizza_ref) { double send_command: true, id: pizza_id }
+
+    before do
+      allow(Pizza).to receive(:create).and_return pizza_ref
+    end
+
+    it 'should start' do
+      saga.send :apply_command, :start
+    end
   end
 
   describe '#start' do
+    before do
+      allow(client).to receive(:post).and_return events_response, ok_response
+    end
+
     it 'should return a SagaPromise' do
       expect(saga.start).to be_a SagaPromise
     end

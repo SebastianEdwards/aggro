@@ -9,16 +9,19 @@ module Aggro
 
     class_methods do
       def events(namespace = nil, &block)
-        test_class = Class.new(BasicObject)
-        starting_methods = test_class.instance_methods
-        test_class.class_eval(&block)
+        new_methods = BlockHelper.method_definitions(&block)
 
         event_methods[namespace] ||= Set.new
-        test_class.instance_methods.each do |meth|
-          event_methods[namespace] << meth unless starting_methods.include? meth
-        end
+        new_methods.each { |method| event_methods[namespace] << method }
 
         class_eval(&block)
+
+        class_eval do
+          new_methods.each do |method|
+            alias_method "#{namespace}_#{method}", method
+            remove_method method
+          end
+        end
       end
 
       def handles_event?(event_name, namespace = nil)

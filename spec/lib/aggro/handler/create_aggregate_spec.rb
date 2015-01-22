@@ -39,7 +39,7 @@ RSpec.describe Handler::CreateAggregate do
 
         before do
           allow(Aggro).to receive(:channels).and_return fake_channels
-          stub_const 'Aggro::AggregateChannel', channel_class
+          stub_const 'Aggro::Channel', channel_class
         end
 
         it 'should add a channel for the aggregate to the channels' do

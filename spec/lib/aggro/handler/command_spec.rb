@@ -18,12 +18,13 @@ RSpec.describe Handler::Command do
   describe '#call' do
     context 'comandee is not handled by the server' do
       let(:node_id) { SecureRandom.uuid }
-      let(:node) { double id: node_id }
+      let(:client) { spy post: Message::OK.new }
+      let(:node) { double id: node_id, client: client }
       let(:local) { false }
 
-      it 'should return Ask with another node to try' do
-        expect(handler.call).to be_a Message::Ask
-        expect(handler.call.node_id).to eq node_id
+      it 'should forward the request to the correct node and return reply' do
+        expect(handler.call).to be_a Message::OK
+        expect(client).to have_received(:post)
       end
     end
 

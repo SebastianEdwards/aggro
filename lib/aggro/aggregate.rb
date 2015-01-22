@@ -15,8 +15,10 @@ module Aggro
       Aggro.event_bus.subscribe(id, self)
     end
 
+    private
+
     def apply_command(command)
-      return unless self.class.allows? command.class
+      return unless self.class.allows? command
 
       @_context = command.attributes
 
@@ -25,8 +27,6 @@ module Aggro
     ensure
       @_context = nil
     end
-
-    private
 
     def did
       fail 'Must be called within a command handler' unless @_context
@@ -39,8 +39,8 @@ module Aggro
         command_handlers[command_class] = block if block
       end
 
-      def allows?(command_class)
-        command_handlers.keys.include? command_class
+      def allows?(command)
+        command_handlers.keys.include? command.class
       end
 
       def create(id = SecureRandom.uuid)
