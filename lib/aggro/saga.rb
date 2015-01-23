@@ -2,6 +2,7 @@ module Aggro
   # Public: Mixin to turn a PORO into an Aggro saga.
   module Saga
     extend ActiveSupport::Concern
+
     include AttributeDSL
     include BindingDSL
 
@@ -17,8 +18,10 @@ module Aggro
     def start
       fail 'Saga is not valid' unless valid?
 
-      promise = SagaPromise.new(self)
-      response = primary_node.client.post to_message
+      promise = SagaStatus.new(saga_id)
+
+      message = Message::StartSaga.new Aggro.local_node.id, saga_id, to_details
+      response = primary_node.client.post message
 
       if response.is_a? Message::OK
         promise
@@ -27,38 +30,23 @@ module Aggro
       end
     end
 
-    def to_details
-      { name: model_name.name, args: serialized_attributes }
-    end
-
     private
-
-    def apply_command(command)
-      return unless command == :start
-
-      @_context = attributes
-
-      @state = self.class.initial
-
-      handler = self.class.handler_for_step(@state)
-      instance_exec(&handler)
-    end
 
     def primary_node
       @primary_node ||= Locator.new(saga_id).primary_node
     end
 
-    def to_message
-      Message::StartSaga.new Aggro.local_node.id, saga_id, to_details
+    def to_details
+      { name: model_name.name, args: serialized_attributes }
     end
 
     class_methods do
-      def allows?(command)
-        command == :start
-      end
-
       def handler_for_step(step_name)
         steps[step_name]
+      end
+
+      def handles_step?(step_name)
+        steps.key? step_name
       end
 
       def initial(step_name = nil)

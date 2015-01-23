@@ -16,16 +16,8 @@ module Aggro
         details[:args]
       end
 
-      def saga_class
-        ActiveSupport::Inflector.safe_constantize name
-      end
-
       def name
         details[:name]
-      end
-
-      def to_saga
-        saga_class.new args if saga_class
       end
 
       def to_s

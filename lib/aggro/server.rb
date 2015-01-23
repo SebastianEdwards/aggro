@@ -8,7 +8,8 @@ module Aggro
       Message::CreateAggregate          => :handle_create,
       Message::GetEvents                => :handle_get_events,
       Message::Heartbeat                => :handle_heartbeat,
-      Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry
+      Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry,
+      Message::StartSaga                => :handle_start_saga
     }
 
     def initialize(endpoint, publisher_endpoint)
@@ -61,6 +62,10 @@ module Aggro
 
     def handle_raw(raw)
       handle_message MessageParser.parse raw
+    end
+
+    def handle_start_saga(message)
+      Handler::StartSaga.new(message, self).call
     end
 
     def message_router

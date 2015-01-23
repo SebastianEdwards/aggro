@@ -9,13 +9,13 @@ module Aggro
       private
 
       def create_channel
-        channel = Channel.new saga.saga_id, saga.class.name
+        channel = Channel.new message.id, 'SagaRunner'
 
-        Aggro.channels[saga.saga_id] = channel
+        Aggro.channels[message.id] = channel
       end
 
       def create_saga
-        Aggro.store.create saga.saga_id, saga.class.name
+        Aggro.store.create message.id, 'SagaRunner'
       end
 
       def locator
@@ -28,7 +28,9 @@ module Aggro
 
       def handle_known
         create_saga
-        create_channel.forward_command :start
+        create_channel
+
+        Aggro.channels[message.id].forward_command start_command
 
         Message::OK.new
       end
@@ -41,12 +43,13 @@ module Aggro
         Message::SagaUnknown.new
       end
 
-      def saga
-        @saga ||= message.to_saga
+      def saga_known?
+        ActiveSupport::Inflector.safe_constantize message.name
       end
 
-      def saga_known?
-        !saga.nil?
+      def start_command
+        SagaRunner::StartSaga.new name: message.name, details: message.args,
+                                  id: message.id
       end
     end
   end

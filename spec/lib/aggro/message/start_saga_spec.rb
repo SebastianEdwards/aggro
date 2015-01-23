@@ -27,18 +27,6 @@ RSpec.describe Message::StartSaga do
     end
   end
 
-  describe '#to_saga' do
-    let(:saga_instance) { double }
-    let(:saga_klass) { spy(new: saga_instance) }
-
-    it 'should build a Saga object' do
-      stub_const 'TestSaga', saga_klass
-
-      expect(message.to_saga).to eq saga_instance
-      expect(saga_klass).to have_received(:new).with args
-    end
-  end
-
   describe '#to_s' do
     it 'should serialize correctly' do
       serialized = message.to_s

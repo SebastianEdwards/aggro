@@ -23,6 +23,10 @@ module Aggro
         @attributes ||= {}
       end
 
+      def attribute(name)
+        create_attrs name, Transform::NOOP
+      end
+
       def email(name)
         create_attrs name, Transform::Email
       end

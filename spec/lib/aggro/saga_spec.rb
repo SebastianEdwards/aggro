@@ -1,47 +1,4 @@
 RSpec.describe Saga do
-  class StartPizza
-    include Command
-
-    string :dough_type
-  end
-
-  class Pizza
-    include Aggregate
-
-    allows StartPizza do
-      if dough == 'yummy'
-        did.started_to_be_made
-      else
-        did.failed_to_start_making
-      end
-    end
-
-    events do
-      def started_to_be_made(dough)
-        @dough = dough.to_sym
-      end
-    end
-  end
-
-  class CookThing
-    include Command
-
-    id :thing_to_cook
-    integer :cook_time
-
-    validates :thing_to_cook, presence: true
-    validates :cook_time, presence: true
-  end
-
-  class Oven
-    include Aggregate
-
-    allows CookThing do |command|
-      sleep command.cook_time
-      did.cooked_thing
-    end
-  end
-
   class PizzaMaker
     include Saga
 
@@ -52,9 +9,7 @@ RSpec.describe Saga do
     initial :prepare_dough
 
     step :prepare_dough do
-      pizza = Pizza.create(pizza_id)
-      command = StartPizza.new(dough_type: dough_type)
-      pizza.send_command(command)
+      pizza = Pizza.create.command(command1)
 
       bind pizza do
         def started_to_be_made
@@ -68,9 +23,31 @@ RSpec.describe Saga do
     end
 
     step :add_toppings do
+      pizza = Pizza.find(pizza_id).command(command2)
+
+      bind pizza do
+        def started_to_be_made
+          transition_to :cook
+        end
+
+        def failed_to_add_toppings
+          reject "I couldn't topa the pizza"
+        end
+      end
     end
 
     step :cook do
+      oven = Oven.find(oven_id).command(command3)
+
+      bind oven do
+        def cooked_thing
+          resolve pizza_id
+        end
+
+        def failed_to_cook_thing
+          reject "I couldn't cooka the pizza"
+        end
+      end
     end
   end
 
@@ -78,40 +55,30 @@ RSpec.describe Saga do
 
   let(:oven_id) { SecureRandom.uuid }
 
-  let(:events_response) { Message::Events.new saga.saga_id, [] }
-  let(:pizza_id) { SecureRandom.uuid }
-  let(:existing_event) { Event.new(:tested_system, Time.now, {}) }
-  let(:pizza_events) { Message::Events.new pizza_id, [existing_event] }
-  let(:ok_response) { Message::OK.new }
-  let(:client) { double post: pizza_events }
-  let(:publisher_endpoint) { 'tcp://127.0.0.1:6000' }
-  let(:node) { double(client: client, publisher_endpoint: publisher_endpoint) }
+  let(:client) { spy }
+  let(:node) { double(client: client) }
   let(:fake_locator) { double primary_node: node }
   let(:locator_class) { double new: fake_locator }
 
+  let(:fake_status) { double }
+  let(:saga_status_class) { double new: fake_status }
+
   before do
     stub_const 'Aggro::Locator', locator_class
-  end
+    stub_const 'Aggro::SagaStatus', saga_status_class
 
-  describe '#apply_command' do
-    let(:pizza_ref) { double send_command: true, id: pizza_id }
-
-    before do
-      allow(Pizza).to receive(:create).and_return pizza_ref
-    end
-
-    it 'should start' do
-      saga.send :apply_command, :start
-    end
+    allow(client).to receive(:post).and_return Message::OK.new
   end
 
   describe '#start' do
     before do
-      allow(client).to receive(:post).and_return events_response, ok_response
+      saga.start
+
+      expect(client).to have_received(:post).with Message::StartSaga
     end
 
-    it 'should return a SagaPromise' do
-      expect(saga.start).to be_a SagaPromise
+    it 'should return a SagaStatus' do
+      expect(saga.start).to eq fake_status
     end
   end
 end
