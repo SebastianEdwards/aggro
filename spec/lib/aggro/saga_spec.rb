@@ -81,4 +81,46 @@ RSpec.describe Saga do
       expect(saga.start).to eq fake_status
     end
   end
+
+  describe '#transition' do
+    it 'should call transition on the runner' do
+      runner = spy transition: true
+      saga.instance_variable_set(:@runner, runner)
+      saga.send :transition, :add_toppings
+
+      expect(runner).to have_received(:transition).with :add_toppings
+    end
+
+    it 'should fail if no runner' do
+      expect { saga.send :transition, :add_toppings }.to raise_error
+    end
+  end
+
+  describe '#resolve' do
+    it 'should call transition on the runner' do
+      runner = spy resolve: true
+      saga.instance_variable_set(:@runner, runner)
+      saga.send :resolve, 'value'
+
+      expect(runner).to have_received(:resolve).with 'value'
+    end
+
+    it 'should fail if no runner' do
+      expect { saga.send :resolve, 'value' }.to raise_error
+    end
+  end
+
+  describe '#reject' do
+    it 'should call transition on the runner' do
+      runner = spy reject: true
+      saga.instance_variable_set(:@runner, runner)
+      saga.send :reject, 'reason'
+
+      expect(runner).to have_received(:reject).with 'reason'
+    end
+
+    it 'should fail if no runner' do
+      expect { saga.send :reject, 'reason' }.to raise_error
+    end
+  end
 end

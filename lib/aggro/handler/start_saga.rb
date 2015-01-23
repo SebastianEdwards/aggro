@@ -9,13 +9,13 @@ module Aggro
       private
 
       def create_channel
-        channel = Channel.new message.id, 'SagaRunner'
+        channel = Channel.new message.id, 'Aggro::SagaRunner'
 
         Aggro.channels[message.id] = channel
       end
 
       def create_saga
-        Aggro.store.create message.id, 'SagaRunner'
+        Aggro.store.create message.id, 'Aggro::SagaRunner'
       end
 
       def locator

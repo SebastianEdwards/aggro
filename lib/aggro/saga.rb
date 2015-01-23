@@ -40,6 +40,24 @@ module Aggro
       { name: model_name.name, args: serialized_attributes }
     end
 
+    def reject(reason)
+      fail 'Runner not set' unless @runner
+
+      @runner.reject reason
+    end
+
+    def resolve(value)
+      fail 'Runner not set' unless @runner
+
+      @runner.resolve value
+    end
+
+    def transition(step_name)
+      fail 'Runner not set' unless @runner
+
+      @runner.transition step_name
+    end
+
     class_methods do
       def handler_for_step(step_name)
         steps[step_name]

@@ -1,6 +1,8 @@
 module Aggro
   # Public: Tracks the state of a saga as it processes.
   class SagaStatus
+    include Projection
+
     attr_reader :reason
     attr_reader :value
 
@@ -24,31 +26,31 @@ module Aggro
       puts timeout
     end
 
-    private
-
-    include Projection
-
     events do
-      def started(step_name)
-        states << step_name
+      def started(state)
+        puts 'status started'
+        states << state.to_sym
       end
 
-      def transitioned(step_name)
-        states << step_name
+      def transitioned(state)
+        puts 'status transitioned'
+        states << state.to_sym
       end
 
-      def failed(reason)
+      def rejected(reason)
         states << :failed
         @reason = reason
         @on_reject.call reason if @on_reject
       end
 
-      def succeeded(response)
+      def resolved(value)
         states << :succeeded
         @value = value
-        @on_fulfill.call response if @on_fulfill
+        @on_fulfill.call value if @on_fulfill
       end
     end
+
+    private
 
     def states
       @states ||= []
