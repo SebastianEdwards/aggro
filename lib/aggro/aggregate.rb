@@ -44,14 +44,7 @@ module Aggro
       end
 
       def create(id = SecureRandom.uuid)
-        message = Message::CreateAggregate.new(Aggro.local_node.id, id, name)
-        result = Locator.new(id).primary_node.client.post(message)
-
-        if result.is_a? Message::OK
-          find(id)
-        else
-          fail 'Could not create aggregate'
-        end
+        find(id).create
       end
 
       def find(id)
