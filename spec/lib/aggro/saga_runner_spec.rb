@@ -39,4 +39,42 @@ RSpec.describe SagaRunner do
       end
     end
   end
+
+  describe '#reject' do
+    let(:proxy) { spy }
+    before { allow(runner).to receive(:did).and_return proxy }
+
+    it 'should set the @_context with @details' do
+      runner.instance_variable_set :@details,  foo: 'bar'
+
+      runner.reject 'reason'
+
+      expect(runner.instance_variable_get(:@_context)[:foo]).to eq 'bar'
+    end
+
+    it 'should call the rejected event' do
+      runner.reject 'reason'
+
+      expect(proxy).to have_received(:rejected).with reason: 'reason'
+    end
+  end
+
+  describe '#resolve' do
+    let(:proxy) { spy }
+    before { allow(runner).to receive(:did).and_return proxy }
+
+    it 'should set the @_context with @details' do
+      runner.instance_variable_set :@details,  foo: 'bar'
+
+      runner.resolve 'value'
+
+      expect(runner.instance_variable_get(:@_context)[:foo]).to eq 'bar'
+    end
+
+    it 'should call the resolved event' do
+      runner.resolve 'value'
+
+      expect(proxy).to have_received(:resolved).with value: 'value'
+    end
+  end
 end

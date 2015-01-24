@@ -136,16 +136,16 @@ RSpec.describe Aggregate do
   end
 
   describe '.new' do
-    let(:fake_event_bus) { spy }
+    let(:event_bus) { spy }
 
     before do
-      allow(Aggro).to receive(:event_bus).and_return(fake_event_bus)
+      allow(Aggro).to receive(:event_bus).and_return(event_bus)
     end
 
     it 'should subscribe itself to events for the given ID' do
       aggregate
 
-      expect(fake_event_bus).to have_received(:subscribe).with(id, aggregate)
+      expect(event_bus).to have_received(:subscribe).with id, aggregate
     end
   end
 
