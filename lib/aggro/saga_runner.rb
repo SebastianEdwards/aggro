@@ -6,6 +6,8 @@ module Aggro
     include Aggregate
 
     allows StartSaga do |command|
+      return unless state == :unstarted
+
       klass = ActiveSupport::Inflector.constantize command.name
       did.started state: klass.initial
 
@@ -62,7 +64,7 @@ module Aggro
     private
 
     def state
-      states.last
+      states.last || :unstarted
     end
 
     def states
