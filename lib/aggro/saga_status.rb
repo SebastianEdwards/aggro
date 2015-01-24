@@ -2,58 +2,28 @@ module Aggro
   # Public: Tracks the state of a saga as it processes.
   class SagaStatus
     include Projection
+    include Concurrent::Obligation
 
-    attr_reader :reason
-    attr_reader :value
-
-    def completed?
-      %i(failed succeeded).include? state
-    end
-
-    def fulfilled?
-      state == :succeeded
-    end
-
-    def rejected?
-      state == :failed
-    end
-
-    def state
-      states.peek || saga_class.initial
-    end
-
-    def wait(timeout = nil)
-      puts timeout
+    def initialize(id)
+      @state = :unscheduled
+      init_obligation
+      super
     end
 
     events do
-      def started(state)
-        puts 'status started'
-        states << state.to_sym
-      end
-
-      def transitioned(state)
-        puts 'status transitioned'
-        states << state.to_sym
+      def started
+        self.state = :pending
       end
 
       def rejected(reason)
-        states << :failed
-        @reason = reason
-        @on_reject.call reason if @on_reject
+        set_state false, nil, reason
+        event.set
       end
 
       def resolved(value)
-        states << :succeeded
-        @value = value
-        @on_fulfill.call value if @on_fulfill
+        set_state true, value, nil
+        event.set
       end
-    end
-
-    private
-
-    def states
-      @states ||= []
     end
   end
 end
