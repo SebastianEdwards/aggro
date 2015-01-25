@@ -1,5 +1,5 @@
 RSpec.describe Subscription do
-  subject(:subscription) { Subscription.new subscriber, namespace, filters, 0}
+  subject(:subscription) { Subscription.new subscriber, namespace, filters, 0 }
 
   let(:subscriber) { double }
   let(:namespace) { :test }
