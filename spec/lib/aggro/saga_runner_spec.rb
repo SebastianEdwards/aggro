@@ -3,7 +3,9 @@ RSpec.describe SagaRunner do
 
   let(:id) { SecureRandom.uuid }
 
-  let(:saga) { spy }
+  let(:causation_id) { SecureRandom.uuid }
+  let(:correlation_id) { SecureRandom.uuid }
+  let(:saga) { spy causation_id: causation_id, correlation_id: correlation_id }
   let(:handler) { -> { @ran = true } }
   let(:saga_class) do
     double new: saga, initial: :first_step, handler_for_step: handler
@@ -42,7 +44,11 @@ RSpec.describe SagaRunner do
 
   describe '#reject' do
     let(:proxy) { spy }
-    before { allow(runner).to receive(:did).and_return proxy }
+
+    before do
+      allow(runner).to receive(:did).and_return proxy
+      runner.instance_variable_set :@saga, saga
+    end
 
     it 'should set the @_context with @details' do
       runner.instance_variable_set :@details,  foo: 'bar'
@@ -61,7 +67,11 @@ RSpec.describe SagaRunner do
 
   describe '#resolve' do
     let(:proxy) { spy }
-    before { allow(runner).to receive(:did).and_return proxy }
+
+    before do
+      allow(runner).to receive(:did).and_return proxy
+      runner.instance_variable_set :@saga, saga
+    end
 
     it 'should set the @_context with @details' do
       runner.instance_variable_set :@details,  foo: 'bar'

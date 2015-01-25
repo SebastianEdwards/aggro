@@ -6,6 +6,14 @@ module Aggro
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
 
+    def initialize(attrs = {})
+      if Thread.current[:aggro_context]
+        super Thread.current[:aggro_context].merge attrs
+      else
+        super
+      end
+    end
+
     def attributes
       self.class.attributes.keys.reduce({}) do |hash, name|
         hash.merge name => send(name)
