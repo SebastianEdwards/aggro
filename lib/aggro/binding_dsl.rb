@@ -1,11 +1,11 @@
 module Aggro
   # Public: Adds a DSL creating domain event bindings.
   module BindingDSL
-    def bind(ref, to: nil, &block)
+    def bind(ref, filters: default_filters, to: nil, &block)
       if to
-        bindings << Aggro.event_bus.subscribe(ref.id, self, to)
+        bindings << Aggro.event_bus.subscribe(ref.id, self, to, filters)
       else
-        bind_block ref, &block
+        bind_block ref, filters, &block
       end
     end
 
@@ -15,18 +15,22 @@ module Aggro
 
     private
 
-    def bind_block(ref, namespace = generate_namespace, &block)
+    def bind_block(ref, filters, namespace = generate_namespace, &block)
       new_methods = BlockHelper.method_definitions(&block)
       event_methods[namespace] = Set.new(new_methods)
 
       class_eval(&block)
       move_methods_to_namespace(new_methods, namespace)
 
-      bindings << Aggro.event_bus.subscribe(ref.id, self, namespace)
+      bindings << Aggro.event_bus.subscribe(ref.id, self, namespace, filters)
     end
 
     def bindings
       @bindings ||= []
+    end
+
+    def default_filters
+      {}
     end
 
     def event_methods

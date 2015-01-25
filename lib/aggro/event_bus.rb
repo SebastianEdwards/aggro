@@ -1,8 +1,6 @@
 module Aggro
   # Public: Publishes events to any subscribed listeners.
   class EventBus
-    Subscription = Struct.new(:subscriber, :namespace, :at_version)
-
     def initialize
       @remote_publishers = {}
     end
@@ -13,12 +11,12 @@ module Aggro
       return unless subscriptions.key? topic
 
       subscriptions[topic].each do |subscription|
-        invoke subscription, event
+        subscription.handle_event event
       end
     end
 
-    def subscribe(topic, subscriber, event_namespace = nil)
-      subscription = Subscription.new(subscriber, event_namespace, 0)
+    def subscribe(topic, subscriber, event_namespace = nil, filters = {})
+      subscription = Subscription.new(subscriber, event_namespace, filters, 0)
 
       catchup_subscriber topic, subscription
 
@@ -37,22 +35,15 @@ module Aggro
       response = Locator.new(topic).primary_node.client.post message
 
       if response.is_a? Message::Events
-        response.events.each { |event| invoke(subscription, event) }
+        response.events.each { |event| subscription.handle_event event }
       else
         fail 'Could not catchup subscriber'
       end
     end
 
-    def invoke(subscription, event)
-      return unless subscription_handles_event?(subscription, event.name)
-
-      Invokr.invoke method: "#{subscription.namespace}_#{event.name}",
-                    using: event.details, on: subscription.subscriber
-    end
-
     def handle_events(topic, events)
       subscriptions[topic].each do |subscription|
-        events.each { |event| invoke subscription, event }
+        events.each { |event| subscription.handle_event event }
       end
     end
 
@@ -67,10 +58,6 @@ module Aggro
       end
 
       remote_publishers[publisher_endpoint].subscribe_to_topic topic
-    end
-
-    def subscription_handles_event?(subscription, event_name)
-      subscription.subscriber.handles_event? event_name, subscription.namespace
     end
 
     def subscriptions

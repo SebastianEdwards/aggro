@@ -65,6 +65,7 @@ require 'aggro/saga_runner'
 require 'aggro/saga_status'
 require 'aggro/server'
 require 'aggro/subscriber'
+require 'aggro/subscription'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
