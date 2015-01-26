@@ -23,6 +23,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     FileUtils.rm_r './tmp/test' if File.exist? './tmp/test'
+    Thread.current[:aggro_context] = nil
   end
 end
 

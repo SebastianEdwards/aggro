@@ -34,6 +34,13 @@ module Aggro
       @event_caller ||= EventProxy.new(self, @id)
     end
 
+    def run_query(query)
+      return unless self.class.responds_to? query
+
+      handler = self.class.handler_for_query(query.class)
+      instance_exec query, &handler
+    end
+
     class_methods do
       def allows(command_class, &block)
         command_handlers[command_class] = block if block
@@ -55,6 +62,10 @@ module Aggro
         command_handlers[command_class]
       end
 
+      def handler_for_query(query_class)
+        query_handlers[query_class]
+      end
+
       def projection(projection_name, via:)
         projections[projection_name] = via
       end
@@ -63,10 +74,22 @@ module Aggro
         @projections ||= {}
       end
 
+      def responds_to(query_class, &block)
+        query_handlers[query_class] = block if block
+      end
+
+      def responds_to?(query)
+        query_handlers.keys.include? query.class
+      end
+
       private
 
       def command_handlers
         @command_handlers ||= {}
+      end
+
+      def query_handlers
+        @query_handlers ||= {}
       end
     end
   end

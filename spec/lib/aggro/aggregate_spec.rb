@@ -7,6 +7,10 @@ RSpec.describe Aggregate do
     string :thing
   end
 
+  class CheckThings
+    include Aggro::Query
+  end
+
   class CatSerializer
     include Aggro::Projection
 
@@ -50,6 +54,10 @@ RSpec.describe Aggregate do
       did.gave_thing
     end
 
+    responds_to CheckThings do
+      things_i_have
+    end
+
     events do
       def gave_thing(thing)
         things_i_have << thing
@@ -61,6 +69,7 @@ RSpec.describe Aggregate do
 
   let(:id) { SecureRandom.uuid }
   let(:command) { GiveSomething.new thing: 'milk' }
+  let(:query) { CheckThings.new }
 
   let(:existing_event) { Event.new(:gave_thing, Time.now, thing: 'cake') }
   let(:response) { Message::Events.new(id, [existing_event]) }
@@ -176,6 +185,12 @@ RSpec.describe Aggregate do
       aggregate.send :apply_command, command
 
       expect(aggregate.json).to eq '{"things":["cake","milk"]}'
+    end
+  end
+
+  describe '#run_query' do
+    it 'should return the result of the query method' do
+      expect(aggregate.send(:run_query, query)).to eq ['cake']
     end
   end
 end

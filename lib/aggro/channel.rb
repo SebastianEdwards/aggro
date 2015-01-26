@@ -10,6 +10,14 @@ module Aggro
       target_class.allows? command
     end
 
+    def handles_query?(query)
+      target_class.responds_to? query
+    end
+
+    def run_query(query)
+      target.ask query if handles_query? query
+    end
+
     private
 
     def target

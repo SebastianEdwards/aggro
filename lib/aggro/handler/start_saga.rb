@@ -40,7 +40,7 @@ module Aggro
       end
 
       def handle_unknown
-        Message::SagaUnknown.new
+        Message::UnknownOperation.new
       end
 
       def saga_known?

@@ -42,7 +42,7 @@ module Aggro
 
           Message::OK.new
         else
-          Message::CommandUnhandled.new
+          Message::UnhandledOperation.new
         end
       rescue NoMethodError
         Message::InvalidTarget.new
@@ -53,7 +53,7 @@ module Aggro
       end
 
       def handle_unknown
-        Message::CommandUnknown.new
+        Message::UnknownOperation.new
       end
     end
   end

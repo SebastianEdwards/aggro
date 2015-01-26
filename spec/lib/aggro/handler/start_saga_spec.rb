@@ -54,10 +54,10 @@ RSpec.describe Handler::StartSaga do
     end
 
     context 'local system does not know the command' do
-      it 'should return SagaUnknown' do
+      it 'should return an UnknownOperation' do
         allow(message).to receive(:name).and_return('NotReal')
 
-        expect(handler.call).to be_a Message::SagaUnknown
+        expect(handler.call).to be_a Message::UnknownOperation
       end
     end
   end

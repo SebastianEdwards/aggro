@@ -9,6 +9,7 @@ module Aggro
       Message::GetEvents                => :handle_get_events,
       Message::Heartbeat                => :handle_heartbeat,
       Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry,
+      Message::Query                    => :handle_query,
       Message::StartSaga                => :handle_start_saga
     }
 
@@ -58,6 +59,10 @@ module Aggro
 
     def handle_publisher_endpoint_inquiry(_message)
       Message::Endpoint.new @publisher_endpoint
+    end
+
+    def handle_query(message)
+      Handler::Query.new(message, self).call
     end
 
     def handle_raw(raw)

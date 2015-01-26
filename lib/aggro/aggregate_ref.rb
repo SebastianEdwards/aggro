@@ -22,6 +22,19 @@ module Aggro
       self
     end
 
+    def query(query)
+      response = send_query(query)
+
+      if response.is_a? Message::InvalidTarget
+        create
+        response = send_query(query)
+      end
+
+      fail 'Could not execute query' unless response.is_a? Message::Result
+
+      response.result
+    end
+
     private
 
     def build_command_message(command)
@@ -30,6 +43,10 @@ module Aggro
 
     def build_create_message
       Message::CreateAggregate.new(Aggro.local_node.id, id, type)
+    end
+
+    def build_query_message(query)
+      Message::Query.new(Aggro.local_node.id, id, query.to_details)
     end
 
     def client
@@ -42,6 +59,10 @@ module Aggro
 
     def send_command(command)
       client.post build_command_message(command)
+    end
+
+    def send_query(query)
+      client.post build_query_message(query)
     end
   end
 end
