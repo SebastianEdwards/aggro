@@ -16,7 +16,8 @@ module Aggro
     end
 
     def subscribe(topic, subscriber, event_namespace = nil, filters = {})
-      subscription = Subscription.new(subscriber, event_namespace, filters, 0)
+      subscription = Subscription.new(topic, subscriber, event_namespace,
+                                      filters, 0)
 
       catchup_subscriber topic, subscription
 
@@ -24,6 +25,12 @@ module Aggro
       subscriptions[topic] << subscription
 
       subscribe_bus_to_publisher topic
+
+      subscription
+    end
+
+    def unsubscribe(topic, subscriber)
+      subscriptions[topic].delete subscriber
     end
 
     private

@@ -1,14 +1,23 @@
 module Aggro
   # Private: Handles invoking events on a subscriber object.
   class Subscription
-    def initialize(subscriber, namespace, filters, at_version)
+    def initialize(topic, subscriber, namespace, filters, at_version)
+      @topic = topic
       @subscriber = subscriber
       @namespace = namespace
       @filters = filters
       @at_version = at_version
+      @canceled = false
+    end
+
+    def cancel
+      Aggro.event_bus.unsubscribe @topic, self unless @canceled
+      @canceled = true
     end
 
     def handle_event(event)
+      return if @canceled
+
       invoke(event) if handles_event?(event) && matches_filter?(event)
     end
 

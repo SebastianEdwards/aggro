@@ -1,8 +1,9 @@
 RSpec.describe Subscription do
-  subject(:subscription) { Subscription.new subscriber, namespace, filters, 0 }
+  subject(:subscription) { Subscription.new topic, subscriber, ns, filters, 0 }
 
+  let(:topic) { SecureRandom.uuid }
   let(:subscriber) { double }
-  let(:namespace) { :test }
+  let(:ns) { :test }
   let(:filters) { { correlation_id: correlation_id } }
 
   let(:correlation_id) { SecureRandom.uuid }
