@@ -11,6 +11,10 @@ module Aggro
       generate_id :correlation_id
     end
 
+    def bindings
+      @runner.bindings
+    end
+
     def default_filters
       { correlation_id: correlation_id }
     end

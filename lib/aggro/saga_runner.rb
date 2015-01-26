@@ -6,84 +6,77 @@ module Aggro
     include Aggregate
 
     allows StartSaga do |command|
-      return unless state == :unstarted
+      @details = command.details
 
-      klass = ActiveSupport::Inflector.constantize command.name
-      did.started state: klass.initial
+      @klass = ActiveSupport::Inflector.constantize command.name
 
-      handler = klass.handler_for_step(state)
-      @saga.send(:instance_exec, &handler)
+      @saga = @klass.new(@details).tap do |saga|
+        saga.instance_variable_set(:@saga_id, command.id)
+        saga.instance_variable_set(:@runner, self)
+      end
+
+      did.started state: @klass.initial
+
+      run_step @klass.initial
+    end
+
+    def bindings
+      @bindings ||= []
+    end
+
+    def cancel_bindings
+      bindings.each(&:cancel)
+      @bindings = []
     end
 
     def reject(reason)
-      set_context
-
       did.rejected reason: reason
 
-      @saga = nil
+      teardown
     end
 
     def resolve(value)
-      set_context
-
       did.resolved value: value
 
-      @saga = nil
+      teardown
     end
 
     def transition(step_name)
-      set_context
-
+      cancel_bindings
       did.transitioned state: step_name
 
-      handler = @klass.handler_for_step(step_name)
-      @saga.send(:instance_exec, &handler)
-    end
-
-    events do
-      def started(id, name, details, state)
-        states << state
-        @klass = ActiveSupport::Inflector.constantize name
-
-        @details = details
-        @saga = @klass.new(@details).tap do |saga|
-          saga.instance_variable_set(:@saga_id, id)
-          saga.instance_variable_set(:@runner, self)
-        end
-
-        set_context
-      end
-
-      def transitioned(state)
-        states << state
-      end
-
-      def resolved
-        states << :succeeded
-      end
-
-      def rejected
-        states << :failed
-      end
+      run_step step_name
     end
 
     private
 
-    def set_context
+    def did
       @_context = @details
-
-      Thread.current[:aggro_context] = {
-        causation_id: @saga.causation_id,
-        correlation_id: @saga.correlation_id
-      }
+      super
     end
 
-    def state
-      states.last || :unstarted
+    def run_step(step_name)
+      with_thread_ids do
+        handler = @klass.handler_for_step(step_name)
+        @saga.send(:instance_exec, &handler)
+      end
     end
 
-    def states
-      @state ||= []
+    def teardown
+      @saga = nil
+      cancel_bindings
+      Aggro.event_bus.subscribe(@id, self)
+    end
+
+    def with_thread_ids
+      old_causation_id = Thread.current[:causation_id]
+      old_correlation_id = Thread.current[:correlation_id]
+      Thread.current[:causation_id] = @details[:causation_id]
+      Thread.current[:correlation_id] = @details[:correlation_id]
+      yield
+    ensure
+      Thread.current[:causation_id] = old_causation_id
+      Thread.current[:correlation_id] = old_correlation_id
     end
   end
 end

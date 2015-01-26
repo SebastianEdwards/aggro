@@ -50,14 +50,6 @@ RSpec.describe SagaRunner do
       runner.instance_variable_set :@saga, saga
     end
 
-    it 'should set the @_context with @details' do
-      runner.instance_variable_set :@details,  foo: 'bar'
-
-      runner.reject 'reason'
-
-      expect(runner.instance_variable_get(:@_context)[:foo]).to eq 'bar'
-    end
-
     it 'should call the rejected event' do
       runner.reject 'reason'
 
@@ -73,18 +65,20 @@ RSpec.describe SagaRunner do
       runner.instance_variable_set :@saga, saga
     end
 
-    it 'should set the @_context with @details' do
-      runner.instance_variable_set :@details,  foo: 'bar'
-
-      runner.resolve 'value'
-
-      expect(runner.instance_variable_get(:@_context)[:foo]).to eq 'bar'
-    end
-
     it 'should call the resolved event' do
       runner.resolve 'value'
 
       expect(proxy).to have_received(:resolved).with value: 'value'
+    end
+  end
+
+  describe '#did' do
+    it 'should set the @_context with @details' do
+      runner.instance_variable_set :@details,  foo: 'bar'
+
+      runner.send :did
+
+      expect(runner.instance_variable_get(:@_context)[:foo]).to eq 'bar'
     end
   end
 end

@@ -7,11 +7,15 @@ module Aggro
     include ActiveModel::Validations::Callbacks
 
     def initialize(attrs = {})
-      if Thread.current[:aggro_context]
-        super Thread.current[:aggro_context].merge attrs
-      else
-        super
+      if Thread.current[:causation_id] && respond_to?(:causation_id=)
+        attrs.merge! causation_id: Thread.current[:causation_id]
       end
+
+      if Thread.current[:correlation_id] && respond_to?(:correlation_id=)
+        attrs.merge! correlation_id: Thread.current[:correlation_id]
+      end
+
+      super
     end
 
     def attributes
