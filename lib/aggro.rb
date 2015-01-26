@@ -86,6 +86,8 @@ module Aggro
 
   class << self
     attr_writer :data_dir
+    attr_writer :port
+    attr_writer :publisher_port
     attr_writer :transport
   end
 
