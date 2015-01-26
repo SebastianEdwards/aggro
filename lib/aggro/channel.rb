@@ -22,7 +22,11 @@ module Aggro
 
     def target
       @target ||= begin
-        ConcurrentActor.spawn! id, target_class.new(id)
+        ConcurrentActor.spawn!(
+          name: id,
+          args: [target_class.new(id)],
+          executor: Concurrent.configuration.global_operation_pool
+        )
       end
     end
 
