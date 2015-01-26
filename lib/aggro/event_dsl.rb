@@ -25,7 +25,11 @@ module Aggro
       end
 
       def handles_event?(event_name, namespace = nil)
-        event_methods[namespace].include? event_name
+        namespace?(namespace) && event_methods[namespace].include?(event_name)
+      end
+
+      def namespace?(namespace)
+        !event_methods[namespace].nil?
       end
 
       private
