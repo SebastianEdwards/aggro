@@ -23,7 +23,7 @@ module Aggro
       private
 
       def generate_id
-        @generated_id ||= SecureRandom.uuid
+        SecureRandom.uuid
       end
 
       def should_generate_id?
