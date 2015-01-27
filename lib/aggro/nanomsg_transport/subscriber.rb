@@ -7,6 +7,8 @@ module Aggro
       class SubscriberAlreadyRunning < RuntimeError; end
 
       def initialize(endpoint, callable = nil, &block)
+        @mutex = Mutex.new
+
         if callable
           @callable = callable
         elsif block_given?
@@ -20,17 +22,25 @@ module Aggro
       end
 
       def add_subscription(topic)
-        sub_queue << topic
+        start unless @running
+
+        @mutex.synchronize do
+          @sub_socket.add_subscription(topic)
+        end
 
         self
       end
 
       def start
-        fail SubscriberAlreadyRunning if @running
+        @mutex.synchronize do
+          return if @running
 
-        @running = true
-        @terminated = false
-        start_on_thread
+          @sub_socket = Subscribe.new(@endpoint)
+          @running = true
+          @terminated = false
+
+          start_on_thread
+        end
 
         self
       end
@@ -48,22 +58,14 @@ module Aggro
 
       def start_on_thread
         Concurrent.configuration.global_task_pool.post do
-          sub_socket = Subscribe.new(@endpoint)
-
           while @running
-            sub_socket.add_subscription sub_queue.pop until sub_queue.empty?
-
-            message = sub_socket.recv_msg
+            message = @sub_socket.recv_msg
             @callable.call(message) if message
           end
 
-          sub_socket.terminate
+          @sub_socket.terminate
           @terminated = true
         end
-      end
-
-      def sub_queue
-        @sub_queue ||= Queue.new
       end
     end
   end
