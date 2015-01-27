@@ -37,14 +37,30 @@ module Aggro
 
     attr_reader :remote_publishers
 
-    def catchup_subscriber(topic, subscription)
+    def catchup_local(topic, subscription)
+      Aggro.store.read([topic]).first.events.each do |event|
+        subscription.handle_event event
+      end
+    end
+
+    def catchup_remote(topic, subscription, node)
       message = Message::GetEvents.new(Aggro.local_node.id, topic, 0)
-      response = Locator.new(topic).primary_node.client.post message
+      response = node.client.post message
 
       if response.is_a? Message::Events
         response.events.each { |event| subscription.handle_event event }
       else
         fail 'Could not catchup subscriber'
+      end
+    end
+
+    def catchup_subscriber(topic, subscription)
+      node = Locator.new(topic).primary_node
+
+      if node.is_a? LocalNode
+        catchup_local(topic, subscription)
+      else
+        catchup_remote(topic, subscription, node)
       end
     end
 
