@@ -41,11 +41,11 @@ module Aggro
       teardown
     end
 
-    def transition(step_name)
+    def transition(step_name, *args)
       cancel_bindings
-      did.transitioned state: step_name
+      did.transitioned state: step_name, args: args
 
-      run_step step_name
+      run_step step_name, args
     end
 
     private
@@ -55,10 +55,13 @@ module Aggro
       super
     end
 
-    def run_step(step_name)
+    def run_step(step_name, args = [])
       with_thread_ids do
         handler = @klass.handler_for_step(step_name)
-        @saga.send(:instance_exec, &handler)
+
+        fail "Step '#{step_name}' does not exist" unless handler
+
+        @saga.send(:instance_exec, *args, &handler)
       end
     rescue => e
       reject e.to_s

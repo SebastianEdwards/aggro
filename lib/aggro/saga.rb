@@ -60,10 +60,10 @@ module Aggro
       @runner.resolve value
     end
 
-    def transition(step_name)
+    def transition(step_name, *args)
       fail 'Runner not set' unless @runner
 
-      @runner.transition step_name
+      @runner.transition step_name, *args
     end
 
     class_methods do
