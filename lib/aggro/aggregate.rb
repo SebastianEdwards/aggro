@@ -39,6 +39,8 @@ module Aggro
 
       handler = self.class.handler_for_query(query.class)
       instance_exec query, &handler
+    rescue RuntimeError => e
+      QueryError.new(e)
     end
 
     class_methods do

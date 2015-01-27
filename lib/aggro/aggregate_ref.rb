@@ -30,9 +30,7 @@ module Aggro
         response = send_query(query)
       end
 
-      fail 'Could not execute query' unless response.is_a? Message::Result
-
-      response.result
+      handle_query_response response
     end
 
     private
@@ -51,6 +49,16 @@ module Aggro
 
     def client
       locator.primary_node.client
+    end
+
+    def handle_query_response(message)
+      fail 'Could not execute query' unless message.is_a? Message::Result
+
+      if message.result.is_a? Aggro::QueryError
+        fail message.result.cause
+      else
+        message.result
+      end
     end
 
     def locator

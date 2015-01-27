@@ -42,4 +42,33 @@ RSpec.describe AggregateRef do
       end
     end
   end
+
+  describe '#query' do
+    let(:query) { double to_details: { name: 'TestQuery' } }
+
+    context 'the response is not an error' do
+      let(:response) { Message::Result.new 'hello' }
+
+      it 'should send the command to the aggregate via the client' do
+        ref.query query
+
+        expect(client).to have_received(:post).with kind_of Message::Query
+      end
+
+      it 'should return the result value' do
+        result = ref.query(query)
+
+        expect(result).to eq 'hello'
+      end
+    end
+
+    context 'the response is an error' do
+      let(:error) { RuntimeError.new 'Something went wrong' }
+      let(:response) { Message::Result.new QueryError.new error }
+
+      it 'should return the result value' do
+        expect { ref.query(query) }.to raise_error 'Something went wrong'
+      end
+    end
+  end
 end

@@ -73,9 +73,9 @@ require 'aggro/subscription'
 # Public: Module for namespacing and configuration methods.
 module Aggro
   ClientNode = Struct.new(:id)
-
   Event = Struct.new(:name, :occured_at, :details)
   EventStream = Struct.new(:id, :type, :events)
+  QueryError = Struct.new(:cause)
 
   MESSAGE_TYPES = Message
                   .constants
