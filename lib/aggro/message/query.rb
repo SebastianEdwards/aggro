@@ -9,7 +9,7 @@ module Aggro
       end
 
       def self.parse_details(details)
-        MessagePack.unpack(details).deep_symbolize_keys!
+        MessagePack.unpack(details, symbolize_keys: true)
       end
 
       def args

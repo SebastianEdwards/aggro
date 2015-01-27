@@ -9,8 +9,8 @@ module Aggro
 
       def read
         Enumerator.new do |yielder|
-          MessagePack::Unpacker.new(@data_io).each do |hash|
-            yielder << EventSerializer.event_from_hash(hash)
+          MessagePack::Unpacker.new(@data_io, symbolize_keys: true).each do |h|
+            yielder << EventSerializer.event_from_hash(h)
           end
         end
       end

@@ -4,12 +4,12 @@ module Aggro
     module_function
 
     def deserialize(serialized)
-      event_from_hash MessagePack.unpack(serialized)
+      event_from_hash MessagePack.unpack(serialized, symbolize_keys: true)
     end
 
     def event_from_hash(hash)
-      Event.new(hash['n'].to_sym, Time.at(hash['t']),
-                hash['d'].deep_symbolize_keys!)
+      Event.new(hash[:n].to_sym, Time.at(hash[:t]),
+                hash[:d])
     end
 
     def serialize(deserialized)

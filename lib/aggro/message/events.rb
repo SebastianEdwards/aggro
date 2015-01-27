@@ -9,7 +9,9 @@ module Aggro
       end
 
       def self.parse_events(string)
-        MessagePack::Unpacker.new(StringIO.new(string)).each.map do |hash|
+        opts = { symbolize_keys: true }
+
+        MessagePack::Unpacker.new(StringIO.new(string), opts).each.map do |hash|
           EventSerializer.event_from_hash(hash)
         end
       end
