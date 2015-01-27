@@ -60,6 +60,8 @@ module Aggro
         handler = @klass.handler_for_step(step_name)
         @saga.send(:instance_exec, &handler)
       end
+    rescue => e
+      reject e.to_s
     end
 
     def teardown
