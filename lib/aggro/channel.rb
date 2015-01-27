@@ -25,7 +25,7 @@ module Aggro
         ConcurrentActor.spawn!(
           name: id,
           args: [target_class.new(id)],
-          executor: Concurrent.configuration.global_operation_pool
+          executor: Concurrent.configuration.global_task_pool
         )
       end
     end

@@ -57,7 +57,7 @@ module Aggro
       private
 
       def start_on_thread
-        Concurrent.configuration.global_task_pool.post do
+        Concurrent::SingleThreadExecutor.new.post do
           while @running
             message = @sub_socket.recv_msg
             @callable.call(message) if message
