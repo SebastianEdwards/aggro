@@ -7,25 +7,21 @@ module Aggro
       class SubscriberAlreadyRunning < RuntimeError; end
 
       def initialize(endpoint, callable = nil, &block)
-        @mutex = Mutex.new
+        fail ArgumentError unless callable || block_given?
 
-        if callable
-          @callable = callable
-        elsif block_given?
-          @callable = block
-        else
-          fail ArgumentError
-        end
+        @callable = block_given? ? block : callable
+        @endpoint = endpoint
+        @mutex = Mutex.new
+        @selector = NIO::Selector.new
 
         ObjectSpace.define_finalizer self, method(:stop)
-        @endpoint = endpoint
       end
 
       def add_subscription(topic)
         start unless @running
 
         @mutex.synchronize do
-          @sub_socket.add_subscription(topic)
+          sub_socket.add_subscription(topic)
         end
 
         self
@@ -33,38 +29,52 @@ module Aggro
 
       def start
         @mutex.synchronize do
-          return if @running
+          return self if @running
 
-          @sub_socket = Subscribe.new(@endpoint)
           @running = true
-          @terminated = false
-
           start_on_thread
+
+          sleep 0.01 while @selector.empty?
         end
 
         self
       end
 
       def stop
-        return self unless @running
+        @mutex.synchronize do
+          return self unless @running
 
-        @running = false
-        sleep 0.01 until @terminated
+          @running = false
+          @selector.wakeup
+
+          sleep 0.01 until @selector.empty?
+        end
 
         self
       end
 
       private
 
+      def handle_message
+        message = sub_socket.recv_msg
+        @callable.call(message) if message
+      end
+
+      def sub_socket
+        @sub_socket ||= Subscribe.new(@endpoint)
+      end
+
       def start_on_thread
         Concurrent::SingleThreadExecutor.new.post do
-          while @running
-            message = @sub_socket.recv_msg
-            @callable.call(message) if message
-          end
+          io = IO.new(sub_socket.recv_fd, 'rb', autoclose: false)
+          @selector.register io, :r
 
-          @sub_socket.terminate
-          @terminated = true
+          @selector.select { handle_message } while @running
+
+          @selector.deregister io
+          io.close
+          sub_socket.terminate
+          @sub_socket = nil
         end
       end
     end
