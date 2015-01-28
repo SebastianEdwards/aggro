@@ -54,13 +54,14 @@ module Aggro
       def start_on_thread
         Concurrent::SingleThreadExecutor.new.post do
           reply_socket = Reply.new(@endpoint)
-          io = IO.new(reply_socket.recv_fd)
+          io = IO.new(reply_socket.recv_fd, 'rb', autoclose: false)
 
           @selector.register io, :r
 
           @selector.select { handle_request(reply_socket) } while @running
 
           @selector.deregister io
+          io.close
           reply_socket.terminate
         end
       end
