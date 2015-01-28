@@ -153,6 +153,8 @@ module Aggro
 
   def reset
     @cluster_config = nil
+    @event_bus.shutdown if @event_bus
+    @event_bus = nil
     @local_node = nil
     @node_list = nil
     @port = nil

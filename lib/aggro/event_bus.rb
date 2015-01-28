@@ -33,6 +33,10 @@ module Aggro
       subscriptions[topic].delete subscriber
     end
 
+    def shutdown
+      remote_publishers.values.each(&:stop)
+    end
+
     private
 
     attr_reader :remote_publishers
