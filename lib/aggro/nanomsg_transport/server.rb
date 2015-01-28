@@ -26,8 +26,9 @@ module Aggro
         fail ServerAlreadyRunning if @running
 
         @running = true
-        @terminated = false
         start_on_thread
+
+        sleep 0.01 while @selector.empty?
 
         self
       end
@@ -38,7 +39,7 @@ module Aggro
         @running = false
         @selector.wakeup
 
-        sleep 0.01 until @terminated
+        sleep 0.01 until @selector.empty?
 
         self
       end
@@ -61,7 +62,6 @@ module Aggro
 
           @selector.deregister io
           reply_socket.terminate
-          @terminated = true
         end
       end
     end
