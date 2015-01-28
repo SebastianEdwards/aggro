@@ -29,6 +29,10 @@ module Aggro
         nbytes
       end
 
+      def recv_fd
+        get_socket_option NNCore::NN_RCVFD
+      end
+
       def recv_msg
         nbytes = NNCore::LibNanomsg.nn_recv(@socket, @rcv_buffer,
                                             NNCore::NN_MSG, 0)
@@ -54,6 +58,19 @@ module Aggro
 
       def assert(rc)
         fail SocketError.new NNCore::LibNanomsg.nn_errno unless rc >= 0
+      end
+
+      def get_socket_option(setting, level = NNCore::NN_SOL_SOCKET)
+        result = FFI::MemoryPointer.new(:int32)
+        size = FFI::MemoryPointer.new(:size_t)
+        size.write_int result.size
+
+        rc = NNCore::LibNanomsg.nn_getsockopt(@socket, level, setting,
+                                              result, size)
+
+        assert(rc)
+
+        result.read_int
       end
 
       def prepare_socket_option(value)

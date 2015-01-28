@@ -1,3 +1,5 @@
+require 'nio'
+
 require 'aggro/nanomsg_transport/reply'
 
 module Aggro
@@ -17,6 +19,7 @@ module Aggro
 
         ObjectSpace.define_finalizer self, method(:stop)
         @endpoint = endpoint
+        @selector = NIO::Selector.new
       end
 
       def start
@@ -33,6 +36,8 @@ module Aggro
         return self unless @running
 
         @running = false
+        @selector.wakeup
+
         sleep 0.01 until @terminated
 
         self
@@ -40,15 +45,21 @@ module Aggro
 
       private
 
+      def handle_request(socket)
+        message = socket.recv_msg
+        socket.send_msg @callable.call(message) if @running
+      end
+
       def start_on_thread
         Concurrent::SingleThreadExecutor.new.post do
           reply_socket = Reply.new(@endpoint)
+          io = IO.new(reply_socket.recv_fd)
 
-          while @running
-            message = reply_socket.recv_msg
-            reply_socket.send_msg @callable.call(message) if message
-          end
+          @selector.register io, :r
 
+          @selector.select { handle_request(reply_socket) } while @running
+
+          @selector.deregister io
           reply_socket.terminate
           @terminated = true
         end

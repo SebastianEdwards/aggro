@@ -12,12 +12,6 @@ module Aggro
       def set_endpoint
         assert NNCore::LibNanomsg.nn_bind(@socket, @endpoint)
       end
-
-      def setup_socket
-        super
-
-        set_socket_option NNCore::NN_RCVTIMEO, 100
-      end
     end
   end
 end
