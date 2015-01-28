@@ -9,17 +9,13 @@ module Aggro
       class ServerAlreadyRunning < RuntimeError; end
 
       def initialize(endpoint, callable = nil, &block)
-        if callable
-          @callable = callable
-        elsif block_given?
-          @callable = block
-        else
-          fail ArgumentError
-        end
+        fail ArgumentError unless callable || block_given?
 
-        ObjectSpace.define_finalizer self, method(:stop)
+        @callable = block_given? ? block : callable
         @endpoint = endpoint
         @selector = NIO::Selector.new
+
+        ObjectSpace.define_finalizer self, method(:stop)
       end
 
       def start
