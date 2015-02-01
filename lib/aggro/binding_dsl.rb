@@ -9,10 +9,6 @@ module Aggro
       end
     end
 
-    def handles_event?(event_name, namespace = nil)
-      event_methods[namespace].include? event_name
-    end
-
     private
 
     def bind_block(ref, filters, namespace = generate_namespace, &block)
@@ -31,10 +27,6 @@ module Aggro
 
     def default_filters
       {}
-    end
-
-    def event_methods
-      @event_methods ||= {}
     end
 
     def generate_namespace

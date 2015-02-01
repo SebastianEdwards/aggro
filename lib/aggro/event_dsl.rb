@@ -4,7 +4,18 @@ module Aggro
     extend ActiveSupport::Concern
 
     def handles_event?(event_name, namespace = nil)
-      self.class.handles_event? event_name, namespace
+      self.class.handles_event?(event_name, namespace) || \
+        namespace?(namespace) && event_methods[namespace].include?(event_name)
+    end
+
+    private
+
+    def event_methods
+      @event_methods ||= {}
+    end
+
+    def namespace?(namespace)
+      !event_methods[namespace].nil?
     end
 
     class_methods do
@@ -28,14 +39,14 @@ module Aggro
         namespace?(namespace) && event_methods[namespace].include?(event_name)
       end
 
-      def namespace?(namespace)
-        !event_methods[namespace].nil?
-      end
-
       private
 
       def event_methods
         @event_methods ||= {}
+      end
+
+      def namespace?(namespace)
+        !event_methods[namespace].nil?
       end
     end
   end

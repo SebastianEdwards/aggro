@@ -5,6 +5,7 @@ module Aggro
 
     include AttributeDSL
     include BindingDSL
+    include EventDSL
 
     included do
       generate_id :causation_id
