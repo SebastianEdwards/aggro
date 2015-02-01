@@ -48,13 +48,13 @@ module Aggro
       { name: model_name.name, args: serialized_attributes }
     end
 
-    def reject(reason)
+    def reject(reason = nil)
       fail 'Runner not set' unless @runner
 
       @runner.reject reason
     end
 
-    def resolve(value)
+    def resolve(value = nil)
       fail 'Runner not set' unless @runner
 
       @runner.resolve value
