@@ -87,11 +87,11 @@ module Aggro
       private
 
       def command_handlers
-        @command_handlers ||= {}
+        Aggro.command_handlers[name]
       end
 
       def query_handlers
-        @query_handlers ||= {}
+        Aggro.query_handlers[name]
       end
     end
   end

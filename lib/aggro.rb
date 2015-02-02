@@ -9,6 +9,27 @@ require 'fileutils'
 require 'msgpack'
 require 'yaml'
 
+# Private: Define methods to protect handlers from code reloading.
+module Aggro
+  module_function
+
+  def class_attributes
+    @class_attributes ||= Hash.new { |hash, key| hash[key] = {} }
+  end
+
+  def command_handlers
+    @command_handlers ||= Hash.new { |hash, key| hash[key] = {} }
+  end
+
+  def query_handlers
+    @query_handlers ||= Hash.new { |hash, key| hash[key] = {} }
+  end
+
+  def step_handlers
+    @step_handlers ||= Hash.new { |hash, key| hash[key] = {} }
+  end
+end
+
 require 'aggro/abstract_store'
 require 'aggro/attribute_dsl'
 require 'aggro/event_dsl'

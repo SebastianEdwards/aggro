@@ -32,7 +32,7 @@ module Aggro
 
     class_methods do
       def attributes
-        @attributes ||= {}
+        Aggro.class_attributes[name]
       end
 
       def attribute(name)

@@ -87,7 +87,7 @@ module Aggro
       private
 
       def steps
-        @steps ||= {}
+        Aggro.step_handlers[name]
       end
     end
   end
