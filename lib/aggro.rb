@@ -35,6 +35,7 @@ require 'aggro/handler/get_events'
 require 'aggro/handler/query'
 require 'aggro/handler/start_saga'
 
+require 'aggro/transform/boolean'
 require 'aggro/transform/email'
 require 'aggro/transform/id'
 require 'aggro/transform/integer'

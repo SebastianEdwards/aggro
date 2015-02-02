@@ -39,6 +39,10 @@ module Aggro
         create_attrs name, Transform::NOOP
       end
 
+      def boolean(name)
+        create_attrs name, Transform::Boolean
+      end
+
       def email(name)
         create_attrs name, Transform::Email
       end
