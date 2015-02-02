@@ -18,9 +18,10 @@ module Aggro
       end
 
       def handle_local
-        Aggro.store.create message.id, message.type
-
-        add_to_channels unless exists_in_channels?
+        unless exists_in_channels?
+          Aggro.store.create message.id, message.type
+          add_to_channels
+        end
 
         Message::OK.new
       end
