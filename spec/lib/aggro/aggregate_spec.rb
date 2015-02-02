@@ -14,7 +14,7 @@ RSpec.describe Aggregate do
   class CatSerializer
     include Aggro::Projection
 
-    def project
+    def serialize
       JSON.dump data
     end
 
@@ -184,7 +184,7 @@ RSpec.describe Aggregate do
     it 'should apply event to the projections' do
       aggregate.send :apply_command, command
 
-      expect(aggregate.json).to eq '{"things":["cake","milk"]}'
+      expect(aggregate.json.serialize).to eq '{"things":["cake","milk"]}'
     end
   end
 

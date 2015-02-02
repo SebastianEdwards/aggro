@@ -9,8 +9,5 @@ module Aggro
     def initialize(id)
       Aggro.event_bus.subscribe(id, self)
     end
-
-    def project
-    end
   end
 end

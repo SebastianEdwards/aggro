@@ -8,7 +8,7 @@ module Aggro
       @id = id
 
       @projections = self.class.projections.reduce({}) do |h, (name, klass)|
-        class_eval { define_method(name) { @projections[name].project } }
+        class_eval { define_method(name) { @projections[name] } }
         h.merge name => klass.new(id)
       end
 
