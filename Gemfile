@@ -6,6 +6,8 @@ gemspec
 gem 'money'
 gem 'monetize'
 
+gem 'time-interval'
+
 group :ci do
   gem 'coveralls', require: false
 end

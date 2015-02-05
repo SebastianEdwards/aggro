@@ -64,6 +64,7 @@ require 'aggro/transform/integer'
 require 'aggro/transform/money'
 require 'aggro/transform/noop'
 require 'aggro/transform/string'
+require 'aggro/transform/time_interval'
 
 require 'aggro/aggregate'
 require 'aggro/aggregate_ref'

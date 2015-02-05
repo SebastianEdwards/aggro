@@ -72,6 +72,14 @@ module Aggro
         create_attrs name, Transform::String
       end
 
+      def time_interval(name)
+        require 'time-interval'
+
+        create_attrs name, Transform::TimeInterval
+      rescue LoadError
+        puts '`time-interval` gem must be present to use time_interval type'
+      end
+
       private
 
       def create_attrs(name, transformer)
