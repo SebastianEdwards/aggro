@@ -8,17 +8,13 @@ module Aggro
       end
 
       def read
-        Enumerator.new do |yielder|
-          MessagePack::Unpacker.new(@data_io, symbolize_keys: true).each do |h|
-            yielder << EventSerializer.event_from_hash(h)
-          end
-        end
+        ObjectStream.new(@data_io, type: 'marshal')
       end
 
       private
 
       def index
-        @index ||= MessagePack::Unpacker.new(@index_io).each.to_a
+        @index ||= ObjectStream.new(@index_io, type: 'marshal')
       end
     end
   end

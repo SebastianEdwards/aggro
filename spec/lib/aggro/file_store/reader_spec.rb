@@ -5,7 +5,7 @@ RSpec.describe FileStore::Reader do
   let(:existing_event) { Event.new :tested_pizza, Time.new(2014), data }
 
   let(:data_content) { EventSerializer.serialize(existing_event) }
-  let(:index_content) { MessagePack.pack data_content.bytesize }
+  let(:index_content) { Marshal.dump data_content.bytesize }
 
   let(:data_io) { StringIO.new(data_content, 'rb') }
   let(:index_io) { StringIO.new(index_content, 'rb') }

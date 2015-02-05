@@ -25,7 +25,7 @@ module Aggro
 
     def create(id, type)
       File.open(@registry_file, 'ab') do |registry_file|
-        registry_file.write MessagePack.pack [id, type]
+        registry_file.write Marshal.dump [id, type]
         registry[id] = type
       end
 
@@ -84,7 +84,7 @@ module Aggro
 
     def initialize_registry
       File.open(@registry_file) do |file|
-        MessagePack::Unpacker.new(file).each do |id, type|
+        ObjectStream.new(file, type: 'marshal').each do |id, type|
           registry[id] = type
         end
       end

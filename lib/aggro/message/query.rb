@@ -9,7 +9,7 @@ module Aggro
       end
 
       def self.parse_details(details)
-        MessagePack.unpack(details, symbolize_keys: true)
+        Marshal.load details
       end
 
       def args
@@ -29,7 +29,7 @@ module Aggro
       end
 
       def to_s
-        "#{TYPE_CODE}#{sender}#{queryable_id}#{MessagePack.pack details}"
+        "#{TYPE_CODE}#{sender}#{queryable_id}#{Marshal.dump details}"
       end
     end
   end

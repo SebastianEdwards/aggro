@@ -18,10 +18,12 @@ RSpec.describe Message::Events do
     it 'should parse correctly' do
       message = Message::Events.parse string
 
+      parsed_events = message.events.to_a
+
       expect(message).to be_a Message::Events
       expect(message.id).to eq id
-      expect(message.events.first.name).to eq events.first.name
-      expect(message.events.last.name).to eq events.last.name
+      expect(parsed_events.first).to eq events.first
+      expect(parsed_events.last).to eq events.last
     end
   end
 

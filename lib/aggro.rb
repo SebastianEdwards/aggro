@@ -7,6 +7,7 @@ require 'consistent_hashing'
 require 'invokr'
 require 'fileutils'
 require 'msgpack'
+require 'object-stream'
 require 'yaml'
 
 # Private: Define methods to protect handlers from code reloading.

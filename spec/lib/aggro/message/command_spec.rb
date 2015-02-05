@@ -6,7 +6,7 @@ RSpec.describe Message::Command do
 
   let(:args) { { thing: 'puppy' } }
   let(:details) { { name: 'TestCommand', args: args } }
-  let(:binary_details) { MessagePack.pack(details) }
+  let(:binary_details) { Marshal.dump(details) }
   let(:string) { type_code + sender + commandee_id + binary_details }
 
   let(:message) { Message::Command.new(sender, commandee_id, details) }

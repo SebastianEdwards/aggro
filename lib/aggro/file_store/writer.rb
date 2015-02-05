@@ -14,12 +14,13 @@ module Aggro
         end
 
         @data_io.flush
+        @index_io.flush
       end
 
       private
 
       def write_to_index(offset)
-        @index_io.write MessagePack.pack(offset)
+        @index_io.write Marshal.dump(offset)
       end
     end
   end

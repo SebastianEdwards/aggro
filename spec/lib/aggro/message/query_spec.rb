@@ -6,7 +6,7 @@ RSpec.describe Message::Query do
 
   let(:args) { { thing: 'puppy' } }
   let(:details) { { name: 'TestQuery', args: args } }
-  let(:binary_details) { MessagePack.pack(details) }
+  let(:binary_details) { Marshal.dump details }
   let(:string) { type_code + sender + queryable_id + binary_details }
 
   let(:message) { Message::Query.new(sender, queryable_id, details) }

@@ -4,7 +4,7 @@ RSpec.describe Message::StartSaga do
 
   let(:args) { { thing: 'puppy' } }
   let(:details) { { name: 'TestSaga', args: args } }
-  let(:binary_details) { MessagePack.pack(details) }
+  let(:binary_details) { Marshal.dump details }
   let(:type_code) { Message::StartSaga::TYPE_CODE }
   let(:string) { type_code + sender + id + binary_details }
 

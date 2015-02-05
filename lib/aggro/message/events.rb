@@ -9,11 +9,7 @@ module Aggro
       end
 
       def self.parse_events(string)
-        opts = { symbolize_keys: true }
-
-        MessagePack::Unpacker.new(StringIO.new(string), opts).each.map do |hash|
-          EventSerializer.event_from_hash(hash)
-        end
+        ObjectStream.new(StringIO.new(string), type: 'marshal')
       end
 
       def serialize_events

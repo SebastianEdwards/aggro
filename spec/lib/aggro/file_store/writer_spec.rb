@@ -26,14 +26,14 @@ RSpec.describe FileStore::Writer do
       writer.write(events)
 
       index_io.rewind
-      offsets = MessagePack::Unpacker.new(index_io).each.to_a
+      offsets = ObjectStream.new(index_io, type: 'marshal').to_a
       expect(offsets.length).to eq 2
     end
 
     context 'when files already contain data' do
       let(:existing_event) { Event.new 'tested_pizza', Time.new(2014), data }
       let(:data_content) { EventSerializer.serialize(existing_event) }
-      let(:index_content) { MessagePack.pack data_content.bytesize }
+      let(:index_content) { Marshal.dump data_content.bytesize }
 
       it 'should write event data to the data file' do
         writer.write(events)
@@ -46,7 +46,7 @@ RSpec.describe FileStore::Writer do
         writer.write(events)
 
         index_io.rewind
-        offsets = MessagePack::Unpacker.new(index_io).each.to_a
+        offsets = ObjectStream.new(index_io, type: 'marshal').to_a
         expect(offsets.length).to eq 3
       end
 
@@ -54,7 +54,7 @@ RSpec.describe FileStore::Writer do
         writer.write(events)
 
         index_io.rewind
-        offsets = MessagePack::Unpacker.new(index_io).each.to_a
+        offsets = ObjectStream.new(index_io, type: 'marshal').to_a
 
         expect do
           EventSerializer.deserialize data_content[0...(offsets[0])]
