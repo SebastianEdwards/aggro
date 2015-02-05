@@ -5,6 +5,7 @@ RSpec.describe Aggregate do
     include Aggro::Command
 
     string :thing
+    money :value
   end
 
   class CheckThings
@@ -40,6 +41,7 @@ RSpec.describe Aggregate do
 
     attr_reader :executed_self
     attr_reader :executed_command
+    attr_reader :executed_money
 
     def things_i_have
       @things ||= []
@@ -59,8 +61,9 @@ RSpec.describe Aggregate do
     end
 
     events do
-      def gave_thing(thing)
+      def gave_thing(thing, value)
         things_i_have << thing
+        @executed_money = value
       end
     end
   end
@@ -68,10 +71,12 @@ RSpec.describe Aggregate do
   subject(:aggregate) { Cat.new(id) }
 
   let(:id) { SecureRandom.uuid }
-  let(:command) { GiveSomething.new thing: 'milk' }
+  let(:command) { GiveSomething.new thing: 'milk', value: '$100 NZD' }
   let(:query) { CheckThings.new }
 
-  let(:existing_event) { Event.new(:gave_thing, Time.now, thing: 'cake') }
+  let(:existing_event) do
+    Event.new(:gave_thing, Time.now, thing: 'cake', value: Money.new(100))
+  end
   let(:response) { Message::Events.new(id, [existing_event]) }
   let(:client) { double(post: response) }
   let(:publisher_endpoint) { 'tcp://127.0.0.1:6000' }
@@ -163,6 +168,12 @@ RSpec.describe Aggregate do
       aggregate.send :apply_command, command
 
       expect(aggregate.executed_self).to eq aggregate
+    end
+
+    it 'should preserve types' do
+      aggregate.send :apply_command, command
+
+      expect(aggregate.executed_money).to be_a Money
     end
 
     it 'should execute the handler with the command as an argument' do

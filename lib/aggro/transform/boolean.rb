@@ -1,6 +1,6 @@
 module Aggro
   module Transform
-    # Private: Transforms integer representations.
+    # Private: Transforms boolean representations.
     module Boolean
       module_function
 

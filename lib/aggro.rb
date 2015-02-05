@@ -61,6 +61,7 @@ require 'aggro/transform/boolean'
 require 'aggro/transform/email'
 require 'aggro/transform/id'
 require 'aggro/transform/integer'
+require 'aggro/transform/money'
 require 'aggro/transform/noop'
 require 'aggro/transform/string'
 
@@ -97,6 +98,7 @@ require 'aggro/subscription'
 module Aggro
   ClientNode = Struct.new(:id)
   Event = Struct.new(:name, :occured_at, :details)
+  EventArgument = Struct.new(:data, :type)
   EventStream = Struct.new(:id, :type, :events)
   QueryError = Struct.new(:cause)
 

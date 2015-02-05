@@ -59,6 +59,15 @@ module Aggro
         create_attrs name, Transform::Integer
       end
 
+      def money(name)
+        require 'money'
+        require 'monetize'
+
+        create_attrs name, Transform::Money
+      rescue LoadError
+        puts '`money` and `monetize` gems must be present to use money type'
+      end
+
       def string(name)
         create_attrs name, Transform::String
       end
