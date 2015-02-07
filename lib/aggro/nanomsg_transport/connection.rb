@@ -6,6 +6,8 @@ module Aggro
   module NanomsgTransport
     # Private: Base class for nanomsg socket wrappers.
     class Connection
+      attr_reader :socket
+
       def initialize(endpoint)
         @endpoint = endpoint
         @rcv_buffer = FFI::MemoryPointer.new(:pointer)

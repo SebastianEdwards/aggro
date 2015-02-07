@@ -1,11 +1,15 @@
 require 'nio'
 
+require 'aggro/nanomsg_transport/raw_reply'
+require 'aggro/nanomsg_transport/raw_request'
 require 'aggro/nanomsg_transport/reply'
 
 module Aggro
   module NanomsgTransport
     # Public: Server to handle messages from nanomsg clients.
     class Server
+      DEFAULT_WORKER_COUNT = 16
+
       class ServerAlreadyRunning < RuntimeError; end
 
       def initialize(endpoint, callable = nil, &block)
@@ -13,7 +17,8 @@ module Aggro
 
         @callable = block_given? ? block : callable
         @endpoint = endpoint
-        @selector = NIO::Selector.new
+        @selectors = DEFAULT_WORKER_COUNT.times.map { NIO::Selector.new }
+        @inproc_endpoint = "inproc://aggro-server-#{SecureRandom.hex}"
 
         ObjectSpace.define_finalizer self, method(:stop)
       end
@@ -22,9 +27,10 @@ module Aggro
         fail ServerAlreadyRunning if @running
 
         @running = true
-        start_on_thread
+        start_master
+        DEFAULT_WORKER_COUNT.times { |i| start_worker i }
 
-        sleep 0.01 while @selector.empty?
+        sleep 0.01 while @selectors.any?(&:empty?)
 
         self
       end
@@ -33,9 +39,12 @@ module Aggro
         return self unless @running
 
         @running = false
-        @selector.wakeup
+        @selectors.each(&:wakeup)
 
-        sleep 0.01 until @selector.empty?
+        sleep 0.01 until @selectors.any?(&:empty?)
+
+        @raw_reply.terminate
+        @raw_request.terminate
 
         self
       end
@@ -47,18 +56,27 @@ module Aggro
         socket.send_msg @callable.call(message) if @running
       end
 
-      def start_on_thread
+      def start_master
+        @master_thread = Concurrent::SingleThreadExecutor.new.post do
+          @raw_reply = RawReply.new(@endpoint)
+          @raw_request = RawRequest.new(@inproc_endpoint)
+
+          NNCore::LibNanomsg.nn_device @raw_request.socket, @raw_reply.socket
+        end
+      end
+
+      def start_worker(i)
         Concurrent::SingleThreadExecutor.new.post do
-          reply_socket = Reply.new(@endpoint)
-          io = IO.new(reply_socket.recv_fd, 'rb', autoclose: false)
+          reply = Reply.new(@inproc_endpoint)
+          io = IO.new(reply.recv_fd, 'rb', autoclose: false)
 
-          @selector.register io, :r
+          @selectors[i].register io, :r
 
-          @selector.select { handle_request(reply_socket) } while @running
+          @selectors[i].select { handle_request(reply) } while @running
 
-          @selector.deregister io
+          @selectors[i].deregister io
           io.close
-          reply_socket.terminate
+          reply.terminate
         end
       end
     end

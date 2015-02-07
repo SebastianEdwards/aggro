@@ -2,7 +2,7 @@ RSpec.describe NanomsgTransport do
   let(:host) { 'tcp://127.0.0.1:7250' }
   let(:message) { SecureRandom.hex }
 
-  it 'should work for REQREP' do
+  xit 'should work for REQREP' do
     server = NanomsgTransport.server(host) { |rec| @rec = rec }.start
     client = NanomsgTransport.client host
 

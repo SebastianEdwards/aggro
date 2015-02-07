@@ -10,7 +10,7 @@ module Aggro
       end
 
       def set_endpoint
-        assert NNCore::LibNanomsg.nn_bind(@socket, @endpoint)
+        assert NNCore::LibNanomsg.nn_connect(@socket, @endpoint)
       end
     end
   end
