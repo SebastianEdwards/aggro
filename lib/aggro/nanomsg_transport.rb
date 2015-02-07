@@ -23,5 +23,9 @@ module Aggro
     def subscriber(endpoint, callable = nil, &block)
       Subscriber.new endpoint, callable, &block
     end
+
+    def teardown
+      NNCore::LibNanomsg.nn_term
+    end
   end
 end
