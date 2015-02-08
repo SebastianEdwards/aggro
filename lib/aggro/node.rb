@@ -20,7 +20,9 @@ module Aggro
       response = client.post(message)
 
       if response.is_a? Message::Endpoint
-        response.endpoint
+        port = URI.parse(response.endpoint).port
+
+        URI.parse(endpoint).tap { |uri| uri.port = port }.to_s
       else
         fail "Could not discover publisher endpoint for #{id}"
       end

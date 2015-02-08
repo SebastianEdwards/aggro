@@ -1,5 +1,5 @@
 RSpec.describe Node do
-  subject(:node) { Node.new('flashing-sparkle') }
+  subject(:node) { Node.new('flashing-sparkle', 'tcp://127.0.0.1:5000') }
 
   describe '#client' do
     it 'should return a client for the node using the current transport' do
@@ -10,10 +10,10 @@ RSpec.describe Node do
   describe '#publisher_endpoint' do
     context 'node returns an Endpoint message' do
       it 'should ask the node for the publisher endpoint' do
-        endpoint = Message::Endpoint.new('endpoint')
+        endpoint = Message::Endpoint.new('tcp://*:8000')
         allow(node).to receive(:client).and_return(double post: endpoint)
 
-        expect(node.publisher_endpoint).to eq 'endpoint'
+        expect(node.publisher_endpoint).to eq 'tcp://127.0.0.1:8000'
       end
     end
 

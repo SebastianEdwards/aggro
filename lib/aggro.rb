@@ -8,6 +8,7 @@ require 'invokr'
 require 'fileutils'
 require 'msgpack'
 require 'object-stream'
+require 'uri'
 require 'yaml'
 
 # Private: Define methods to protect handlers from code reloading.

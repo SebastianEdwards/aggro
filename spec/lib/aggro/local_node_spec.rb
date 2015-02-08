@@ -20,7 +20,7 @@ RSpec.describe LocalNode do
     end
 
     it 'should have a local TCP endpoint with the correct port' do
-      expect(node.endpoint).to eq 'tcp://127.0.0.1:6000'
+      expect(node.endpoint).to eq 'tcp://*:6000'
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe LocalNode do
     end
 
     it 'should have a local TCP endpoint with the correct port' do
-      expect(node.publisher_endpoint).to eq 'tcp://127.0.0.1:7000'
+      expect(node.publisher_endpoint).to eq 'tcp://*:7000'
     end
   end
 
