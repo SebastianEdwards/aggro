@@ -6,11 +6,11 @@ module Aggro
     end
 
     def endpoint
-      "tcp://127.0.0.1:#{Aggro.port}"
+      "tcp://*:#{Aggro.port}"
     end
 
     def publisher_endpoint
-      "tcp://127.0.0.1:#{Aggro.publisher_port}"
+      "tcp://*:#{Aggro.publisher_port}"
     end
 
     def to_s
