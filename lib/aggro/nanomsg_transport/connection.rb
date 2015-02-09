@@ -48,10 +48,6 @@ module Aggro
         NNCore::LibNanomsg.nn_freemsg str
 
         response
-      rescue SocketError => e
-        raise e unless e.errno == NNCore::EAGAIN
-
-        nil
       end
 
       def terminate
