@@ -21,7 +21,8 @@ module Aggro
         set_socket_option NNCore::NN_LINGER, 100
         set_socket_option NNCore::NN_SNDBUF, 131_072
         set_socket_option NNCore::NN_RCVBUF, 131_072
-        set_socket_option NNCore::NN_RCVTIMEO, 10000
+        set_socket_option NNCore::NN_RCVTIMEO, 10_000
+        set_socket_option NNCore::NN_SNDTIMEO, 1_000
       end
 
       def send_msg(stringable)
