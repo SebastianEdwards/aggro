@@ -5,6 +5,10 @@ module Aggro
       @transport_client = Aggro.transport.client(endpoint)
     end
 
+    def disconnect!
+      @transport_client.close_socket
+    end
+
     def post(message)
       MessageParser.parse @transport_client.post message
     end
