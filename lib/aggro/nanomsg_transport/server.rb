@@ -53,7 +53,11 @@ module Aggro
 
       def handle_request(socket)
         message = socket.recv_msg
-        socket.send_msg @callable.call(message) if @running
+
+        response = '00'
+        response = @callable.call(message)
+      ensure
+        socket.send_msg response
       end
 
       def start_master
