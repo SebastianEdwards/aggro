@@ -1,6 +1,8 @@
 module Aggro
   # Public: Publishes events to any subscribed listeners.
   class EventBus
+    attr_reader :remote_publishers
+
     def initialize
       @remote_publishers = {}
     end
@@ -38,8 +40,6 @@ module Aggro
     end
 
     private
-
-    attr_reader :remote_publishers
 
     def catchup_local(topic, subscription)
       Aggro.store.read([topic]).first.events.each do |event|
