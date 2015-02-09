@@ -43,6 +43,10 @@ module Aggro
         create_attrs name, Transform::Boolean
       end
 
+      def date(name)
+        create_attrs name, Transform::Date
+      end
+
       def email(name)
         create_attrs name, Transform::Email
       end
@@ -70,6 +74,10 @@ module Aggro
 
       def string(name)
         create_attrs name, Transform::String
+      end
+
+      def time(name)
+        create_attrs name, Transform::Time
       end
 
       def time_interval(name)
