@@ -19,6 +19,7 @@ module Aggro
         @endpoint = endpoint
         @selectors = DEFAULT_WORKER_COUNT.times.map { NIO::Selector.new }
         @inproc_endpoint = "inproc://aggro-server-#{SecureRandom.hex}"
+        @device_mutex = Mutex.new
 
         ObjectSpace.define_finalizer self, method(:stop)
       end
@@ -51,13 +52,17 @@ module Aggro
 
       private
 
-      def handle_request(socket)
-        message = socket.recv_msg
-
+      def respond_to_request(message, socket)
         response = '00'
-        response = @callable.call(message)
+        response = @callable.call(message) if message
       ensure
-        socket.send_msg response
+        @device_mutex.synchronize { socket.send_msg response }
+      end
+
+      def handle_request(socket)
+        return unless @running
+
+        respond_to_request socket.recv_msg, socket
       end
 
       def start_master
