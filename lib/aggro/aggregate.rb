@@ -53,10 +53,14 @@ module Aggro
       end
 
       def create(id = SecureRandom.uuid)
+        fail ArgumentError unless id && id.length == 36
+
         find(id).create
       end
 
       def find(id)
+        fail ArgumentError unless id && id.length == 36
+
         AggregateRef.new id, name
       end
 
