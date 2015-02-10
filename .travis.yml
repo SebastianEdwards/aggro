@@ -10,6 +10,4 @@ matrix:
     - rvm: jruby-head
     - rvm: ruby-head
 script: bundle exec rspec
-before_install:
-  - git clone git://github.com/nanomsg/nanomsg.git
-  - cd nanomsg && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ${TRAVIS_BUILD_DIR}
+before_install: sudo apt-get install libzmq3-dev
