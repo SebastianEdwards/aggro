@@ -1,6 +1,6 @@
 module Aggro
   # Private: Wraps a given target in an concurrent actor.
-  class ConcurrentActor < Concurrent::Actor::Context
+  class ConcurrentActor < Concurrent::Actor::RestartingContext
     def initialize(target)
       @target = target
     end
