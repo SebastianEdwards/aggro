@@ -16,7 +16,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Aggro.reset
     FileUtils.mkdir_p './tmp/test'
     Aggro.data_dir = './tmp/test'
   end
@@ -24,6 +23,7 @@ RSpec.configure do |config|
   config.after(:each) do
     FileUtils.rm_r './tmp/test' if File.exist? './tmp/test'
     Thread.current[:aggro_context] = nil
+    Aggro.reset unless Aggro.is_a? RSpec::Mocks::Double
   end
 end
 

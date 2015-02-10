@@ -10,6 +10,7 @@ require 'msgpack'
 require 'object-stream'
 require 'uri'
 require 'yaml'
+require 'zero_mq'
 
 # Private: Define methods to protect handlers from code reloading.
 module Aggro
@@ -87,7 +88,6 @@ require 'aggro/local_node'
 require 'aggro/locator'
 require 'aggro/message_parser'
 require 'aggro/message_router'
-require 'aggro/nanomsg_transport'
 require 'aggro/node'
 require 'aggro/node_list'
 require 'aggro/projection'
@@ -98,6 +98,7 @@ require 'aggro/saga_status'
 require 'aggro/server'
 require 'aggro/subscriber'
 require 'aggro/subscription'
+require 'aggro/zeromq_transport'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
@@ -188,8 +189,8 @@ module Aggro
     @local_node = nil
     @node_list = nil
     @port = nil
-    @publisher = nil
     @publisher_port = nil
+    @server.stop if @server
     @server = nil
     @store = nil
   end
@@ -205,6 +206,6 @@ module Aggro
   end
 
   def transport
-    @transport ||= NanomsgTransport
+    @transport ||= ZeroMQTransport
   end
 end

@@ -35,8 +35,8 @@ module Aggro
     end
 
     def stop
-      @transport_server.stop
       @transport_publisher.close_socket
+      @transport_server.stop
     end
 
     private
@@ -79,10 +79,6 @@ module Aggro
           HANDLERS.each { |type, sym| router.attach_handler type, method(sym) }
         end
       end
-    end
-
-    def publisher
-      @publisher ||= Publisher.new(local_node.publisher_endpoint)
     end
   end
 end

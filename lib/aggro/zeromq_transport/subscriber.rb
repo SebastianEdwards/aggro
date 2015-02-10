@@ -1,7 +1,5 @@
-require 'aggro/nanomsg_transport/subscribe'
-
 module Aggro
-  module NanomsgTransport
+  module ZeroMQTransport
     # Public: Handles subscribing to messages on a given endpoint.
     class Subscriber
       class SubscriberAlreadyRunning < RuntimeError; end
@@ -12,17 +10,12 @@ module Aggro
         @callable = block_given? ? block : callable
         @endpoint = endpoint
         @mutex = Mutex.new
-        @selector = NIO::Selector.new
-
-        ObjectSpace.define_finalizer self, method(:stop)
       end
 
       def add_subscription(topic)
         start unless @running
 
-        @mutex.synchronize do
-          sub_socket.add_subscription(topic)
-        end
+        @mutex.synchronize { sub_socket.setsockopt ZMQ::SUBSCRIBE, topic }
 
         self
       end
@@ -31,10 +24,10 @@ module Aggro
         @mutex.synchronize do
           return self if @running
 
-          @running = true
+          sub_socket
           start_on_thread
 
-          sleep 0.01 while @selector.empty?
+          sleep 0.01 until @running
         end
 
         self
@@ -45,9 +38,6 @@ module Aggro
           return self unless @running
 
           @running = false
-          @selector.wakeup
-
-          sleep 0.01 until @selector.empty?
         end
 
         self
@@ -56,24 +46,28 @@ module Aggro
       private
 
       def handle_message
-        message = sub_socket.recv_msg
-        @callable.call(message) if message
+        message = ''
+        sub_socket.recv_string message
+
+        @callable.call message if message.present?
       end
 
       def sub_socket
-        @sub_socket ||= Subscribe.new(@endpoint)
+        @sub_socket ||= begin
+          socket = ZeroMQTransport.context.socket(ZMQ::SUB)
+          socket.connect @endpoint
+
+          socket
+        end
       end
 
       def start_on_thread
         Concurrent::SingleThreadExecutor.new.post do
-          io = IO.new(sub_socket.recv_fd, 'rb', autoclose: false)
-          @selector.register io, :r
+          @running = true
 
-          @selector.select { handle_message } while @running
+          handle_message while @running
 
-          @selector.deregister io
-          io.close
-          sub_socket.terminate
+          sub_socket.close
           @sub_socket = nil
         end
       end
