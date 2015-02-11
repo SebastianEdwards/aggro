@@ -183,6 +183,7 @@ module Aggro
   end
 
   def reset
+    @channels = nil
     @cluster_config = nil
     @event_bus.shutdown if @event_bus
     @event_bus = nil
