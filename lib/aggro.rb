@@ -182,17 +182,25 @@ module Aggro
   end
 
   def reset
-    @channels = nil
     @cluster_config = nil
     @event_bus.shutdown if @event_bus
     @event_bus = nil
     @local_node = nil
-    @node_list = nil
+    reset_clients && @node_list = nil
     @port = nil
     @publisher_port = nil
     @server.stop if @server
     @server = nil
     @store = nil
+  end
+
+  def reset_clients
+    return unless @node_list
+
+    @node_list.nodes
+      .select { |node| node.is_a? Node }
+      .map(&:client)
+      .each(&:disconnect!)
   end
 
   def server

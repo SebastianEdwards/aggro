@@ -25,9 +25,16 @@ RSpec.configure do |config|
     Thread.current[:aggro_context] = nil
     Aggro.reset unless Aggro.is_a? RSpec::Mocks::Double
   end
+
+  config.after(:suite) do
+    Aggro.reset
+    Aggro.transport.teardown
+  end
 end
 
 require 'aggro'
+
+Aggro.transport.linger = 0
 
 Aggro.constants.each do |const|
   eval "#{const} = Aggro::#{const}"

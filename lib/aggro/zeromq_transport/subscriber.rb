@@ -13,7 +13,7 @@ module Aggro
       end
 
       def add_subscription(topic)
-        start unless @running
+        start unless @mutex.synchronize { @running }
 
         @mutex.synchronize { sub_socket.setsockopt ZMQ::SUBSCRIBE, topic }
 
@@ -63,9 +63,14 @@ module Aggro
 
       def start_on_thread
         Concurrent::SingleThreadExecutor.new.post do
+          poller = ZeroMQ::Poller.new
+          poller.register_readable sub_socket
+
           @running = true
 
-          handle_message while @running
+          (handle_message while poller.poll(1) > 0) while @running
+
+          poller.deregister_readable sub_socket
 
           sub_socket.close
           @sub_socket = nil

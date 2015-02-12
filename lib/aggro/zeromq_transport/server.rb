@@ -41,7 +41,6 @@ module Aggro
         return self unless @running
 
         @running = false
-        DEFAULT_WORKER_COUNT.times { @work_queue << nil }
 
         self
       end
@@ -72,9 +71,12 @@ module Aggro
       def start_master
         Concurrent::SingleThreadExecutor.new.post do
           socket = ZeroMQTransport.context.socket(ZMQ::XREP)
+          poller = ZeroMQ::Poller.new
+          poller.register_readable socket
+          socket.setsockopt ZMQ::LINGER, ZeroMQTransport.linger
           socket.bind @endpoint
 
-          enqueue_request socket while @running
+          (enqueue_request socket while poller.poll(1) > 0) while @running
 
           socket.close
         end
