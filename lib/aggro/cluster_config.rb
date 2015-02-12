@@ -23,6 +23,11 @@ module Aggro
       @nodes ||= {}.freeze
     end
 
+    def server_node=(value)
+      @is_server_node = value
+      persist_config
+    end
+
     def server_node?
       @is_server_node == true
     end
