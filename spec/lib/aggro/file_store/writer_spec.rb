@@ -26,7 +26,7 @@ RSpec.describe FileStore::Writer do
       writer.write(events)
 
       index_io.rewind
-      offsets = ObjectStream.new(index_io, type: 'marshal').to_a
+      offsets = MarshalStream.new(index_io).to_a
       expect(offsets.length).to eq 2
     end
 
@@ -46,7 +46,7 @@ RSpec.describe FileStore::Writer do
         writer.write(events)
 
         index_io.rewind
-        offsets = ObjectStream.new(index_io, type: 'marshal').to_a
+        offsets = MarshalStream.new(index_io).to_a
         expect(offsets.length).to eq 3
       end
 
@@ -54,7 +54,7 @@ RSpec.describe FileStore::Writer do
         writer.write(events)
 
         index_io.rewind
-        offsets = ObjectStream.new(index_io, type: 'marshal').to_a
+        offsets = MarshalStream.new(index_io).to_a
 
         expect do
           EventSerializer.deserialize data_content[0...(offsets[0])]

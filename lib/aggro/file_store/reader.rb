@@ -8,13 +8,13 @@ module Aggro
       end
 
       def read
-        ObjectStream.new(@data_io, type: 'marshal')
+        MarshalStream.new @data_io
       end
 
       private
 
       def index
-        @index ||= ObjectStream.new(@index_io, type: 'marshal')
+        @index ||= MarshalStream.new(@index_io)
       end
     end
   end

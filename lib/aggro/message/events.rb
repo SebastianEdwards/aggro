@@ -9,7 +9,7 @@ module Aggro
       end
 
       def self.parse_events(string)
-        ObjectStream.new(StringIO.new(string), type: 'marshal')
+        MarshalStream.new StringIO.new(string)
       end
 
       def serialize_events

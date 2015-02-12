@@ -84,7 +84,7 @@ module Aggro
 
     def initialize_registry
       File.open(@registry_file) do |file|
-        ObjectStream.new(file, type: 'marshal').each do |id, type|
+        MarshalStream.new(file).each do |id, type|
           registry[id] = type
         end
       end
