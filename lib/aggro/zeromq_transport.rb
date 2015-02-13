@@ -38,6 +38,7 @@ module Aggro
 
     def teardown
       @context.terminate if @context
+      @context = nil
     end
   end
 end
