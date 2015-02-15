@@ -66,6 +66,8 @@ module Aggro
       else
         catchup_remote(topic, subscription, node)
       end
+
+      subscription.notify_subscription_caught_up
     end
 
     def handle_events(topic, events)

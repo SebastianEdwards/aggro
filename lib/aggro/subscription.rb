@@ -21,6 +21,12 @@ module Aggro
       invoke(event) if handles_event?(event) && matches_filter?(event)
     end
 
+    def notify_subscription_caught_up
+      return unless @subscriber.handles_event? :caught_up, @namespace
+
+      @subscriber.send "#{@namespace}_caught_up"
+    end
+
     private
 
     def handles_event?(event)
