@@ -3,16 +3,15 @@ module Aggro
   module Aggregate
     extend ActiveSupport::Concern
     include EventDSL
+    include Logging
 
     def initialize(id)
       @id = id
 
-      @projections = self.class.projections.reduce({}) do |h, (name, klass)|
-        class_eval { define_method(name) { @projections[name] } }
-        h.merge name => klass.new(id)
-      end
+      start_projections
+      restore_from_event_stream
 
-      Aggro.event_bus.subscribe(id, self)
+      log INFO, 'Restored to memory'
     end
 
     private
@@ -24,6 +23,10 @@ module Aggro
 
       handler = self.class.handler_for_command(command.class)
       instance_exec command, &handler
+    rescue => e
+      log ERROR, "Couldn't apply command\n#{e}\n#{e.backtrace.join "\n"}"
+
+      raise e
     ensure
       @_context = nil
     end
@@ -34,13 +37,33 @@ module Aggro
       @event_caller ||= EventProxy.new(self, @id)
     end
 
+    def log(level, message, &block)
+      super level, "#{self.class}/#{@id}", message, &block
+    end
+
+    def restore_from_event_stream
+      Aggro.event_bus.subscribe(@id, self)
+    rescue => e
+      log FATAL, "Couldn't restore from events\n#{e}\n#{e.backtrace.join "\n"}"
+    end
+
     def run_query(query)
       return unless self.class.responds_to? query
 
       handler = self.class.handler_for_query(query.class)
       instance_exec query, &handler
-    rescue RuntimeError => e
+    rescue => e
+      log ERROR, "Couldn't complete query\n#{e}\n#{e.backtrace.join "\n"}"
       QueryError.new(e)
+    end
+
+    def start_projections
+      @projections = self.class.projections.reduce({}) do |h, (name, klass)|
+        class_eval { define_method(name) { @projections[name] } }
+        h.merge name => klass.new(@id)
+      end
+    rescue => e
+      log FATAL, "Couldn't start projections\n#{e}\n#{e.backtrace.join "\n"}"
     end
 
     class_methods do

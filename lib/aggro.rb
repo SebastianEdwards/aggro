@@ -33,6 +33,7 @@ end
 
 require 'aggro/attribute_dsl'
 require 'aggro/event_dsl'
+require 'aggro/logging'
 
 require 'aggro/message/ask'
 require 'aggro/message/command'
@@ -115,6 +116,7 @@ module Aggro
 
   class << self
     attr_writer :data_dir
+    attr_writer :logger
     attr_writer :port
     attr_writer :publisher_port
     attr_writer :transport
@@ -160,6 +162,10 @@ module Aggro
     else
       @local_node ||= ClientNode.new(SecureRandom.uuid)
     end
+  end
+
+  def logger
+    @logger ||= -> (_level, _progname, _message = nil, &_block) {}
   end
 
   def node_list
