@@ -31,7 +31,6 @@ module Aggro
   end
 end
 
-require 'aggro/abstract_store'
 require 'aggro/attribute_dsl'
 require 'aggro/event_dsl'
 

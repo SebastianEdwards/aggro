@@ -3,7 +3,7 @@ require 'aggro/file_store/writer'
 
 module Aggro
   # Public: Stores and retrieves events by serializing them to flat files.
-  class FileStore < AbstractStore
+  class FileStore
     INDEX_DIRECTORY = 'indexes'.freeze
     EVENT_DIRECTORY = 'events'.freeze
     REGISTRY_FILE = 'registry'.freeze

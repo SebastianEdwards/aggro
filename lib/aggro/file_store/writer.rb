@@ -1,5 +1,5 @@
 module Aggro
-  class FileStore < AbstractStore
+  class FileStore
     # Private: Serializes events to an IO object.
     class Writer
       def initialize(data_io, index_io)
