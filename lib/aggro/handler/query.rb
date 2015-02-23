@@ -37,15 +37,15 @@ module Aggro
       end
 
       def handle_known
-        if channel.handles_query?(query)
-          result = channel.run_query(query)
-
-          Message::Result.new result.value(5)
+        if channel
+          if channel.handles_query?(query)
+            handle_supported
+          else
+            Message::UnhandledOperation.new
+          end
         else
-          Message::UnhandledOperation.new
+          Message::InvalidTarget.new
         end
-      rescue NoMethodError
-        Message::InvalidTarget.new
       end
 
       def handle_local
@@ -54,6 +54,18 @@ module Aggro
 
       def handle_unknown
         Message::UnknownOperation.new
+      end
+
+      def handle_supported
+        result = channel.run_query(query)
+
+        result.wait(5)
+
+        if result.fulfilled?
+          Message::Result.new result.value
+        else
+          Message::Result.new Aggro::QueryError.new('Query timed out')
+        end
       end
     end
   end
