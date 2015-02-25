@@ -8,8 +8,9 @@ RSpec.describe Message::Events do
   let(:events) { [event1, event2] }
 
   let(:binary_events) do
-    events.map { |event| EventSerializer.serialize event }.join
+    events.map { |event| Marshal.dump EventSerializer.serialize event }.join
   end
+
   let(:string) { EVENTS_TYPE_CODE + id + binary_events }
 
   let(:message) { Message::Events.new(id, events) }

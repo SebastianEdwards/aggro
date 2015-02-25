@@ -9,7 +9,7 @@ module Aggro
 
       def write(events)
         events.each do |event|
-          @data_io.write EventSerializer.serialize(event)
+          @data_io.write Marshal.dump EventSerializer.serialize(event)
           write_to_index @data_io.pos
         end
 

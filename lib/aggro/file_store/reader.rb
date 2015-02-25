@@ -8,13 +8,21 @@ module Aggro
       end
 
       def read
-        MarshalStream.new @data_io
+        Enumerator.new do |yielder|
+          stream.each do |raw_event|
+            yielder << EventSerializer.deserialize(raw_event)
+          end
+        end
       end
 
       private
 
       def index
-        @index ||= MarshalStream.new(@index_io)
+        @index ||= MarshalStream.new @index_io
+      end
+
+      def stream
+        @stream ||= MarshalStream.new @data_io
       end
     end
   end

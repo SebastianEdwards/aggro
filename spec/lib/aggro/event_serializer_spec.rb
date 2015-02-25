@@ -5,7 +5,7 @@ RSpec.describe EventSerializer do
     it 'should convert a hash to some serialized form' do
       serialized = EventSerializer.serialize event
 
-      expect(serialized).to be_a String
+      expect(serialized).to be_a Array
     end
   end
 

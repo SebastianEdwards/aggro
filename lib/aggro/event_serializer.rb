@@ -4,11 +4,11 @@ module Aggro
     module_function
 
     def deserialize(serialized)
-      Marshal.load serialized
+      Event.new(*serialized)
     end
 
     def serialize(deserialized)
-      Marshal.dump deserialized
+      [deserialized.name, deserialized.occured_at, deserialized.details]
     end
   end
 end

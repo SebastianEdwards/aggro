@@ -9,11 +9,15 @@ module Aggro
       end
 
       def self.parse_events(string)
-        MarshalStream.new StringIO.new(string)
+        Enumerator.new do |yielder|
+          MarshalStream.new(StringIO.new(string)).each do |raw_event|
+            yielder << EventSerializer.deserialize(raw_event)
+          end
+        end
       end
 
       def serialize_events
-        events.map { |event| EventSerializer.serialize event }.join
+        events.map { |event| Marshal.dump EventSerializer.serialize event }.join
       end
 
       def to_s

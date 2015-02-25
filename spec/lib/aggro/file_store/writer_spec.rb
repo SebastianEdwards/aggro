@@ -32,7 +32,8 @@ RSpec.describe FileStore::Writer do
 
     context 'when files already contain data' do
       let(:existing_event) { Event.new 'tested_pizza', Time.new(2014), data }
-      let(:data_content) { EventSerializer.serialize(existing_event) }
+      let(:raw_content) { EventSerializer.serialize(existing_event) }
+      let(:data_content) { Marshal.dump raw_content }
       let(:index_content) { Marshal.dump data_content.bytesize }
 
       it 'should write event data to the data file' do
