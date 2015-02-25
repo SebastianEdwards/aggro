@@ -7,6 +7,7 @@ module Aggro
     include EventDSL
 
     def initialize(id)
+      @id = id
       Aggro.event_bus.subscribe(id, self)
     end
   end
