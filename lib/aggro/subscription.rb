@@ -1,6 +1,8 @@
 module Aggro
   # Private: Handles invoking events on a subscriber object.
   class Subscription
+    attr_reader :caught_up
+
     def initialize(topic, subscriber, namespace, filters, at_version)
       @topic = topic
       @subscriber = subscriber
@@ -22,6 +24,8 @@ module Aggro
     end
 
     def notify_subscription_caught_up
+      @caught_up = true
+
       return unless @subscriber.handles_event? :caught_up, @namespace
 
       @subscriber.send "#{@namespace}_caught_up"

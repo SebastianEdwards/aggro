@@ -13,6 +13,7 @@ module Aggro
       return unless subscriptions.key? topic
 
       subscriptions[topic].each do |subscription|
+        sleep 0.01 until subscription.caught_up
         subscription.handle_event event
       end
     end
