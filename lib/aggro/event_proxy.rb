@@ -8,7 +8,7 @@ module Aggro
 
     def method_missing(method_sym, *args)
       details = merge_details_with_command_context(args.pop || {})
-      event = Event.new(method_sym, Time.now, details)
+      event = Event.new(method_sym, Time.now.utc, details)
 
       Aggro.store.write_single @id, event
       Aggro.event_bus.publish @id, event
