@@ -8,7 +8,9 @@ RSpec.describe Subscription do
 
   let(:correlation_id) { SecureRandom.uuid }
   let(:details) {  { name: 'Sebastian', correlation_id: correlation_id } }
-  let(:event) { double(name: 'added_contact', details: details) }
+  let(:event) do
+    double(name: 'added_contact', details: details, occured_at: Time.now)
+  end
 
   let(:invokr) { spy }
   before { stub_const 'Invokr', invokr }
@@ -22,7 +24,7 @@ RSpec.describe Subscription do
           subscription.handle_event event
 
           expect(invokr).to have_received(:invoke).with \
-            on: subscriber, method: 'test_added_contact', using: details
+            on: subscriber, method: 'test_added_contact', using: Hash
         end
       end
 

@@ -58,9 +58,11 @@ RSpec.describe FileStore::Writer do
         offsets = MarshalStream.new(index_io).to_a
 
         expect do
-          EventSerializer.deserialize data_content[0...(offsets[0])]
-          EventSerializer.deserialize data_content[offsets[0]...offsets[1]]
-          EventSerializer.deserialize data_content[offsets[1]...offsets[2]]
+          [
+            data_content[0...(offsets[0])],
+            data_content[offsets[0]...offsets[1]],
+            data_content[offsets[1]...offsets[2]]
+          ].each { |data| EventSerializer.deserialize Marshal.load(data) }
         end.to_not raise_error
       end
     end

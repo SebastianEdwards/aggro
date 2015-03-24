@@ -33,13 +33,17 @@ module Aggro
 
     private
 
+    def expand_event(event)
+      event.details.merge now: event.occured_at, today: event.occured_at.to_date
+    end
+
     def handles_event?(event)
       @subscriber.handles_event? event.name, @namespace
     end
 
     def invoke(event)
-      Invokr.invoke method: "#{@namespace}_#{event.name}",
-                    using: event.details, on: @subscriber
+      Invokr.invoke method: "#{@namespace}_#{event.name}", on: @subscriber,
+                    using: expand_event(event)
     end
 
     def matches_filter?(event)

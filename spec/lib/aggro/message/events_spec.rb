@@ -3,8 +3,8 @@ RSpec.describe Message::Events do
 
   let(:id) { SecureRandom.uuid }
 
-  let(:event1) { Event.new :tested_pizza, Time.new, foo: 'bar' }
-  let(:event2) { Event.new :tested_system, Time.new, bar: 'foo' }
+  let(:event1) { Event.new :tested_pizza, Time.now.round, foo: 'bar' }
+  let(:event2) { Event.new :tested_system, Time.now.round, bar: 'foo' }
   let(:events) { [event1, event2] }
 
   let(:binary_events) do
