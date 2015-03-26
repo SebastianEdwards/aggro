@@ -1,6 +1,13 @@
 module Aggro
   # Public: Reference to an Aggregate which may be local or remote.
-  class AggregateRef < Struct.new(:id, :type)
+  class AggregateRef
+    attr_reader :id, :type
+
+    def initialize(id, type)
+      @id = id
+      @type = type
+    end
+
     def command(command, create_on_unknown: true)
       response = send_command(command)
 
