@@ -107,6 +107,9 @@ module Aggro
   EventStream = Struct.new(:id, :type, :events)
   QueryError = Struct.new(:cause)
 
+  class CannotExecuteCommand < RuntimeError; end
+  class CannotExecuteQuery < RuntimeError; end
+
   MESSAGE_TYPES = Message
                   .constants
                   .map { |sym| Message.const_get sym }

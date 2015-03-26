@@ -16,7 +16,7 @@ module Aggro
         response = send_command(command)
       end
 
-      fail 'Could not send command' unless response.is_a? Message::OK
+      fail CannotExecuteCommand unless response.is_a? Message::OK
 
       self
     end
@@ -59,7 +59,7 @@ module Aggro
     end
 
     def handle_query_response(message)
-      fail 'Could not execute query' unless message.is_a? Message::Result
+      fail CannotExecuteQuery unless message.is_a? Message::Result
 
       if message.result.is_a? Aggro::QueryError
         fail message.result.cause
