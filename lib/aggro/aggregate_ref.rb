@@ -1,10 +1,10 @@
 module Aggro
   # Public: Reference to an Aggregate which may be local or remote.
   class AggregateRef < Struct.new(:id, :type)
-    def command(command)
+    def command(command, create_on_unknown: true)
       response = send_command(command)
 
-      if response.is_a? Message::InvalidTarget
+      if response.is_a?(Message::InvalidTarget) && create_on_unknown
         create
         response = send_command(command)
       end
@@ -22,10 +22,10 @@ module Aggro
       self
     end
 
-    def query(query)
+    def query(query, create_on_unknown: true)
       response = send_query(query)
 
-      if response.is_a? Message::InvalidTarget
+      if response.is_a?(Message::InvalidTarget) && create_on_unknown
         create
         response = send_query(query)
       end
