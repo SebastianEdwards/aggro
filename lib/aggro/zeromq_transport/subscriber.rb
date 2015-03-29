@@ -62,7 +62,7 @@ module Aggro
       end
 
       def start_on_thread
-        Concurrent::SingleThreadExecutor.new.post do
+        Concurrent.configuration.global_operation_pool.post do
           poller = ZeroMQ::Poller.new
           poller.register_readable sub_socket
 
