@@ -69,7 +69,7 @@ module Aggro
       end
 
       def start_master
-        Concurrent.configuration.global_operation_pool.post do
+        Concurrent.configuration.global_task_pool.post do
           socket = ZeroMQTransport.context.socket(ZMQ::XREP)
           poller = ZeroMQ::Poller.new
           poller.register_readable socket
@@ -83,7 +83,7 @@ module Aggro
       end
 
       def start_worker
-        Concurrent.configuration.global_operation_pool.post do
+        Concurrent.configuration.global_task_pool.post do
           respond_to_request @work_queue.pop while @running
         end
       end
