@@ -6,6 +6,8 @@ require 'aggro/zeromq_transport/subscriber'
 module Aggro
   # Public: Transport layer over nanomsg sockets.
   module ZeroMQTransport
+    CONTEXT = ZeroMQ::Context.new
+
     class << self
       attr_writer :linger
     end
@@ -17,7 +19,7 @@ module Aggro
     end
 
     def context
-      @context ||= ZeroMQ::Context.new
+      CONTEXT
     end
 
     def linger
@@ -37,8 +39,7 @@ module Aggro
     end
 
     def teardown
-      @context.terminate if @context
-      @context = nil
+      CONTEXT.terminate
     end
   end
 end
