@@ -20,6 +20,11 @@ module Aggro
       run_step @klass.initial
     end
 
+    def initialize(id)
+      @run_steps = Set.new
+      super id
+    end
+
     def bindings
       @bindings ||= []
     end
@@ -42,6 +47,8 @@ module Aggro
     end
 
     def transition(step_name, *args)
+      return if @run_steps.include? step_name
+
       cancel_bindings
       did.transitioned state: step_name, args: args
 
@@ -56,6 +63,8 @@ module Aggro
     end
 
     def run_step(step_name, args = [])
+      @run_steps << step_name
+
       with_thread_ids do
         handler = @klass.handler_for_step(step_name)
 
@@ -70,6 +79,7 @@ module Aggro
     def teardown
       @saga = nil
       cancel_bindings
+      Aggro.event_bus.unsubscribe(@id, self)
     end
 
     def with_thread_ids
