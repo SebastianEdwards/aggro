@@ -70,7 +70,6 @@ module Aggro
     def teardown
       @saga = nil
       cancel_bindings
-      Aggro.event_bus.subscribe(@id, self)
     end
 
     def with_thread_ids
