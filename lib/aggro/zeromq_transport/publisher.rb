@@ -4,6 +4,7 @@ module Aggro
     class Publisher
       def initialize(endpoint)
         @endpoint = endpoint
+        @mutex = Mutex.new
       end
 
       def close_socket
@@ -27,7 +28,9 @@ module Aggro
       end
 
       def publish(message)
-        pub_socket.send_string message.to_s
+        @mutex.synchronize do
+          pub_socket.send_string message.to_s
+        end
       end
 
       private
