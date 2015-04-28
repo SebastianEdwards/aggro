@@ -6,7 +6,7 @@ RSpec.describe Transform::Money do
   let(:five_nzd) { Money.new(500, 'NZD') }
 
   describe '.deserialize' do
-    it 'should transform strings to a Money' do
+    it 'should transform non-blank strings to a Money' do
       expect(Transform::Money.deserialize('$10.00 USD')).to eq ten_usd
       expect(Transform::Money.deserialize('$5.00 NZD')).to eq five_nzd
     end
@@ -22,6 +22,14 @@ RSpec.describe Transform::Money do
 
     it 'should return nil if not a string' do
       expect(Transform::Money.deserialize(true)).to eq nil
+    end
+
+    it 'should return nil if blank' do
+      expect(Transform::Money.deserialize('')).to eq nil
+    end
+
+    it 'should return nil if non-number string' do
+      expect(Transform::Money.deserialize('$')).to eq nil
     end
   end
 

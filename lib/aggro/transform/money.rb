@@ -5,7 +5,11 @@ module Aggro
       module_function
 
       def deserialize(value)
+        return if value.blank?
+
         if value.is_a? ::String
+          return unless value.match(/\d/)
+
           Monetize.parse(value)
         elsif value.is_a? ::Integer
           Monetize.parse(value.to_s)
