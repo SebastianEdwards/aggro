@@ -2,7 +2,7 @@ require 'aggro/version'
 
 require 'active_model'
 require 'active_support/core_ext/hash/keys'
-require 'concurrent'
+require 'concurrent/actor'
 require 'consistent_hashing'
 require 'invokr'
 require 'fileutils'

@@ -64,6 +64,8 @@ module Aggro
       end
     rescue => e
       log FATAL, "Couldn't start projections\n#{e}\n#{e.backtrace.join "\n"}"
+
+      raise e
     end
 
     class_methods do
