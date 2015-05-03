@@ -91,6 +91,8 @@ module Aggro
       private
 
       def create_attrs(name, transformer)
+        public
+
         attr_reader name
         attributes[name] = transformer
 
