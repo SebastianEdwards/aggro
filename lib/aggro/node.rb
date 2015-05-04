@@ -2,7 +2,7 @@ module Aggro
   # Public: Represents an aggro server node.
   class Node < Struct.new(:id, :endpoint)
     def client
-      @client ||= Aggro::Client.new(endpoint)
+      Aggro::Client.new(endpoint)
     end
 
     def publisher_endpoint

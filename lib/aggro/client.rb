@@ -11,6 +11,8 @@ module Aggro
 
     def post(message)
       MessageParser.parse @transport_client.post message
+    ensure
+      disconnect!
     end
   end
 end
