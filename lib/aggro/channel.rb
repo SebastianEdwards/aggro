@@ -7,6 +7,7 @@ module Aggro
     def initialize(id, type)
       @id = id
       @type = type
+      @load_mutex = Mutex.new
     end
 
     def forward_command(command)
@@ -36,11 +37,15 @@ module Aggro
 
     def target
       @target ||= begin
-        ConcurrentActor.spawn!(
-          name: id,
-          args: [target_class.new(id)],
-          executor: Concurrent.configuration.global_task_pool
-        )
+        @load_mutex.synchronize do
+          return @target if @target
+
+          ConcurrentActor.spawn!(
+            name: id,
+            args: [target_class.new(id)],
+            executor: Concurrent.configuration.global_task_pool
+          )
+        end
       rescue
         nil
       end
