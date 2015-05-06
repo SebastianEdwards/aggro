@@ -17,7 +17,6 @@ RSpec.describe ZeroMQTransport do
 
   it 'should work for PUBSUB' do
     publisher = ZeroMQTransport.publisher('tcp://*:7350')
-    publisher.open_socket
 
     @reced = []
 

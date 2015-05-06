@@ -8,7 +8,7 @@ RSpec.describe Aggro do
   end
 
   describe '.node_list' do
-    let(:nodes) { { 'fluffy' => '10.0.0.50' } }
+    let(:nodes) { { 'fluffy' => 'tcp://127.0.0.1:6000' } }
     let(:is_server_node) { true }
     let(:fake_config) do
       double(

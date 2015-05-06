@@ -19,11 +19,12 @@ module Aggro
 
       @transport_server = Aggro.transport.server endpoint, method(RAW_HANDLER)
       @transport_publisher = Aggro.transport.publisher publisher_endpoint
+
+      @publish_mutex = Mutex.new
     end
 
     def bind
       @transport_server.start
-      @transport_publisher.open_socket
     end
 
     def handle_message(message)
@@ -31,7 +32,9 @@ module Aggro
     end
 
     def publish(message)
-      @transport_publisher.publish message
+      @publish_mutex.synchronize do
+        @transport_publisher.publish message
+      end
     end
 
     def stop
