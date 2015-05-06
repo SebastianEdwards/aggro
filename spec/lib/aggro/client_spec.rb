@@ -1,5 +1,5 @@
 RSpec.describe Client do
-  subject(:client) { Client.new(endpoint) }
+  subject(:client) { Client.new(endpoint, 1) }
 
   let(:endpoint) { 'tcp://10.0.0.1:4000' }
 
