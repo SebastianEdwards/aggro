@@ -54,7 +54,7 @@ module Aggro
 
       def sub_socket
         @sub_socket ||= begin
-          socket = ZeroMQTransport.context.socket(ZMQ::SUB)
+          socket = ZeroMQTransport::CONTEXT.socket(ZMQ::SUB)
           socket.connect @endpoint
 
           socket

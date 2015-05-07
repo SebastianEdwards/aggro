@@ -6,6 +6,8 @@ gemspec
 gem 'money'
 gem 'monetize'
 
+gem 'nn-core', github: 'chuckremes/nn-core'
+
 gem 'time-interval'
 
 group :ci do

@@ -1,3 +1,5 @@
+require 'zero_mq'
+
 require 'aggro/zeromq_transport/client'
 require 'aggro/zeromq_transport/publisher'
 require 'aggro/zeromq_transport/server'
@@ -16,10 +18,6 @@ module Aggro
 
     def client(endpoint)
       Client.new endpoint
-    end
-
-    def context
-      CONTEXT
     end
 
     def linger
@@ -42,4 +40,6 @@ module Aggro
       CONTEXT.terminate
     end
   end
+
+  self.transport = ZeroMQTransport if respond_to? :transport
 end

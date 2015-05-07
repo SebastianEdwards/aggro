@@ -70,7 +70,7 @@ module Aggro
 
       def start_master
         Concurrent::SingleThreadExecutor.new.post do
-          socket = ZeroMQTransport.context.socket(ZMQ::XREP)
+          socket = ZeroMQTransport::CONTEXT.socket(ZMQ::XREP)
           poller = ZeroMQ::Poller.new
           poller.register_readable socket
           socket.setsockopt ZMQ::LINGER, ZeroMQTransport.linger

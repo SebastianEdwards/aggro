@@ -33,6 +33,8 @@ RSpec.configure do |config|
 end
 
 require 'aggro'
+require 'aggro/nanomsg_transport'
+require 'aggro/zeromq_transport'
 
 Aggro.transport.linger = 0
 

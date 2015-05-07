@@ -1,22 +1,22 @@
+require 'aggro/nanomsg_transport/publish'
+
 module Aggro
-  module ZeroMQTransport
+  module NanomsgTransport
     # Public: Handles publishing messages on a given endpoint.
     class Publisher
       def initialize(endpoint)
-        @socket = ZeroMQTransport::CONTEXT.socket(ZMQ::PUB)
-        @socket.setsockopt ZMQ::LINGER, 1_000
-        @socket.bind endpoint
+        @socket = Publish.new(endpoint)
       end
 
       def close_socket
         fail 'Already closed' unless @socket
 
-        @socket.close
+        @socket.terminate
         @socket = nil
       end
 
       def publish(message)
-        @socket.send_string message.to_s
+        @socket.send_msg message
       end
     end
   end

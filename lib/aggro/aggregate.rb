@@ -59,7 +59,7 @@ module Aggro
 
     def start_projections
       @projections = self.class.projections.reduce({}) do |h, (name, klass)|
-        class_eval { define_method(name) { @projections[name] } }
+        class_eval { public; define_method(name) { @projections[name] } }
         h.merge name => klass.new(@id)
       end
     rescue => e

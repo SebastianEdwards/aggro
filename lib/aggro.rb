@@ -8,7 +8,6 @@ require 'invokr'
 require 'fileutils'
 require 'uri'
 require 'yaml'
-require 'zero_mq'
 
 # Private: Define methods to protect handlers from code reloading.
 module Aggro
@@ -97,7 +96,6 @@ require 'aggro/saga_status'
 require 'aggro/server'
 require 'aggro/subscriber'
 require 'aggro/subscription'
-require 'aggro/zeromq_transport'
 
 # Public: Module for namespacing and configuration methods.
 module Aggro
@@ -222,6 +220,10 @@ module Aggro
   end
 
   def transport
-    @transport ||= ZeroMQTransport
+    @transport ||= begin
+      require 'aggro/zeromq_transport'
+
+      ZeroMQTransport
+    end
   end
 end

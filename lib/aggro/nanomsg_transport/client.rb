@@ -1,26 +1,24 @@
+require 'aggro/nanomsg_transport/request'
+
 module Aggro
-  module ZeroMQTransport
+  module NanomsgTransport
     # Public: Client for making requests against a nanomsg server.
     class Client
       def initialize(endpoint)
-        @socket = ZeroMQTransport::CONTEXT.socket(ZMQ::REQ)
-        @socket.connect endpoint
+        @socket = Request.new(endpoint)
       end
 
       def close_socket
         fail 'Already closed' unless @socket
 
-        @socket.close
+        @socket.terminate
         @socket = nil
       end
 
       def post(message)
-        @socket.send_string message.to_s
+        @socket.send_msg message
 
-        response = ''
-        @socket.recv_string response
-
-        response
+        @socket.recv_msg
       end
     end
   end
