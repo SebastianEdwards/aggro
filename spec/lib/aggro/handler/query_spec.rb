@@ -1,7 +1,8 @@
 RSpec.describe Handler::Query do
   subject(:handler) { Handler::Query.new message, server }
 
-  let(:query) { double }
+  let(:query_class) { double(timeout: 5) }
+  let(:query) { double(class: query_class) }
   let(:queryable_id) { SecureRandom.uuid }
   let(:message) { double to_query: query, queryable_id: queryable_id }
   let(:server) { double }

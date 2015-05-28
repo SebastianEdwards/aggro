@@ -2,6 +2,8 @@ RSpec.describe Query do
   class TestQuery
     include Query
 
+    timeout 10
+
     string :term
     validates :term, presence: true
 

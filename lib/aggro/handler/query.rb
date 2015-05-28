@@ -59,7 +59,7 @@ module Aggro
       def handle_supported
         result = channel.run_query(query)
 
-        result.wait(5)
+        result.wait(query.class.timeout)
 
         if result.fulfilled?
           Message::Result.new result.value
