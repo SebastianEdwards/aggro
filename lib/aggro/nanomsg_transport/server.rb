@@ -53,8 +53,7 @@ module Aggro
       end
 
       def start_master
-        Thread.abort_on_exception = true
-        Thread.new do
+        Concurrent::SingleThreadExecutor.new.post do
           @raw_reply = RawReply.new(@endpoint)
           @raw_request = RawRequest.new(@inproc_endpoint)
 
