@@ -13,7 +13,7 @@ module Aggro
     def forward_command(command)
       return unless target
 
-      target << command if handles_command?(command)
+      concurrent_target << command if handles_command?(command)
     end
 
     def handles_command?(command)
@@ -24,30 +24,40 @@ module Aggro
       target_class.responds_to? query
     end
 
+    def run_fast_query(query)
+      return QueryError.new 'Could not initialize aggregate' unless target
+
+      target.send :run_query, query
+    end
+
     def run_query(query)
       unless target
         error = QueryError.new 'Could not initialize aggregate'
         return Concurrent::IVar.new error
       end
 
-      target.ask query if handles_query? query
+      concurrent_target.ask query if handles_query? query
     end
 
     private
 
     def target
-      @target ||= begin
-        @load_mutex.synchronize do
-          return @target if @target
+      @target ||= @load_mutex.synchronize do
+        return @target if @target
 
-          ConcurrentActor.spawn!(
-            name: id,
-            args: [target_class.new(id)],
-            executor: Concurrent.configuration.global_task_pool
-          )
-        end
-      rescue
-        nil
+        target_class.new(id)
+      end
+    rescue
+      nil
+    end
+
+    def concurrent_target
+      @concurrent_target ||= begin
+        ConcurrentActor.spawn!(
+          name: id,
+          args: [target],
+          executor: Concurrent.configuration.global_task_pool
+        )
       end
     end
 

@@ -6,6 +6,7 @@ module Aggro
     HANDLERS = {
       Message::Command                  => :handle_command,
       Message::CreateAggregate          => :handle_create,
+      Message::FastQuery                => :handle_fast_query,
       Message::GetEvents                => :handle_get_events,
       Message::Heartbeat                => :handle_heartbeat,
       Message::PublisherEndpointInquiry => :handle_publisher_endpoint_inquiry,
@@ -50,6 +51,10 @@ module Aggro
 
     def handle_create(message)
       Handler::CreateAggregate.new(message, self).call
+    end
+
+    def handle_fast_query(message)
+      Handler::FastQuery.new(message, self).call
     end
 
     def handle_get_events(message)

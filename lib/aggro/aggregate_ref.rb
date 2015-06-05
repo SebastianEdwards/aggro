@@ -29,12 +29,12 @@ module Aggro
       self
     end
 
-    def query(query, create_on_unknown: true)
-      response = send_query(query)
+    def query(query, create_on_unknown: true, ensure_consistency: true)
+      response = send_query(query, ensure_consistency)
 
       if response.is_a?(Message::InvalidTarget) && create_on_unknown
         create
-        response = send_query(query)
+        response = send_query(query, ensure_consistency)
       end
 
       handle_query_response response
@@ -48,6 +48,10 @@ module Aggro
 
     def build_create_message
       Message::CreateAggregate.new(Aggro.local_node.id, id, type)
+    end
+
+    def build_fast_query_message(query)
+      Message::FastQuery.new(Aggro.local_node.id, id, query.to_details)
     end
 
     def build_query_message(query)
@@ -76,8 +80,12 @@ module Aggro
       client.post build_command_message(command)
     end
 
-    def send_query(query)
-      client.post build_query_message(query)
+    def send_query(query, ensure_consistency)
+      if ensure_consistency
+        client.post build_query_message(query)
+      else
+        client.post build_fast_query_message(query)
+      end
     end
   end
 end
