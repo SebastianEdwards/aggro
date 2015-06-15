@@ -61,7 +61,7 @@ module Aggro
 
         result.wait(query.class.timeout)
 
-        if result.fulfilled?
+        if result.success?
           Message::Result.new result.value
         else
           Message::Result.new Aggro::QueryError.new('Query timed out')

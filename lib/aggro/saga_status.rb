@@ -2,7 +2,7 @@ module Aggro
   # Public: Tracks the state of a saga as it processes.
   class SagaStatus
     include Projection
-    include Concurrent::Obligation
+    include Concurrent::Concern::Obligation
 
     def initialize(id)
       @state = :unscheduled
