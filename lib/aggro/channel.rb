@@ -56,7 +56,7 @@ module Aggro
         ConcurrentActor.spawn!(
           name: id,
           args: [target],
-          executor: Concurrent.configuration.global_task_pool
+          executor: Concurrent.global_io_executor
         )
       end
     end
