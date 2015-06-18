@@ -2,7 +2,7 @@ module Aggro
   module ZeroMQTransport
     # Public: Server to handle messages from nanomsg clients.
     class Server
-      DEFAULT_WORKER_COUNT = 16
+      DEFAULT_WORKER_COUNT = 64
 
       # Private: Struct to hold request workload data.
       class Workload < Struct.new(:identity, :message, :socket, :mutex)

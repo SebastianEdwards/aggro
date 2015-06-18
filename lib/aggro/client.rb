@@ -1,7 +1,7 @@
 module Aggro
   # Public: Makes requests against a given endpoint returning parsed responses.
   class Client
-    DEFAULT_POOL_SIZE = 16
+    DEFAULT_POOL_SIZE = 64
 
     def initialize(endpoint, pool_size = DEFAULT_POOL_SIZE)
       @pool = Queue.new

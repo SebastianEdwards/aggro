@@ -6,7 +6,7 @@ module Aggro
   module NanomsgTransport
     # Public: Server to handle messages from nanomsg clients.
     class Server
-      DEFAULT_WORKER_COUNT = 16
+      DEFAULT_WORKER_COUNT = 64
 
       class ServerAlreadyRunning < RuntimeError; end
 
