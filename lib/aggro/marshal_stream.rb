@@ -4,8 +4,6 @@ class MarshalStream
 
   DEFAULT_MAX_OUTBOX = 10
 
-  class StreamError < StandardError; end
-
   attr_reader :io
   attr_reader :max_outbox
 
@@ -61,10 +59,6 @@ class MarshalStream
 
   def read_from_stream
     yield Marshal.load(io)
-  rescue IOError, SystemCallError
-    raise
-  rescue => e
-    raise StreamError, "Unreadble stream: #{e}"
   end
 
   def read_one
